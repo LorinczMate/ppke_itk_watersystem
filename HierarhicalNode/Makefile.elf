@@ -1,0 +1,9 @@
+OBJS = heboric
+
+all: main.elf 
+
+main.elf: main.c CC2500.c UART.c
+	msp430-elf-gcc -std=gnu99 -mmcu=msp430f2274 -O2 -Wall -Wextra -o main.elf main.c CC2500.c UART.c TI_CC_spi.c DataLinkLayer.c PhysicLayer.c utility.c
+
+clean :
+	rm -f main.elf
