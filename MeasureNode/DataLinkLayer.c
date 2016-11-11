@@ -87,13 +87,13 @@ void sendMeasurementDLPacket(char messageType, char to, char from, char payloadL
 void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, char distance, char *measurementData, char payloadLength, char *payload){
 	TURN_ON_RED_LED;
 
-/*--------------------------
-A CSOMAG FELÉPÍTÉSE:
-parentnode|myAddress|messageType|distance|parentnode|myAddress|measurementData|rssi
+	/*--------------------------
+	A CSOMAG FELÉPÍTÉSE:
+	parentnode|myAddress|messageType|distance|parentnode|myAddress|measurementData|rssi
 
-HB_DLLayerben kapott csomag:
-to|from|messagetype|distance|parentnode|source|measurementData|rssi
-----------------------------*/
+	HB_DLLayerben kapott csomag:
+	to|from|messagetype|distance|parentnode|source|measurementData|rssi
+	----------------------------*/
 	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
 	memcpy(payload, rssi, rssilength);
 	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurementData);}
@@ -104,7 +104,7 @@ to|from|messagetype|distance|parentnode|source|measurementData|rssi
 	arrayShiftRight(payloadLength++, payload, messageType);
 	arrayShiftRight(payloadLength++, payload, myAddress);
 	arrayShiftRight(payloadLength++, payload, parentnode);
-	sendMyMeasurementToSerialPort(payload);
+	sendMyMeasurementToSerialPort(payload, measurementData, rssi);
 	sendPPacket(payloadLength, payload);
 
 }
@@ -127,14 +127,22 @@ void sendNetworkPacketToSerialPort(char *buffer){
    LINE_BREAK;
    sendString("DLL payload: ");
    LINE_BREAK;
-   sendChar(buffer[0]+'0'); //
+   sendChar(buffer[0]+'0');
    sendChar(buffer[1]+'0');
    sendChar(buffer[2]+'0');
    sendChar(buffer[3]+'0');
    LINE_BREAK;
 }
 
-void sendMyMeasurementToSerialPort(char *buffer){
+void sendMyMeasurementToSerialPort(char *buffer, char *measurementData, char *rssi){
+	char rssiToSerial[20];
+	char measurementToSerial[10];
+	itoa(rssi,rssiToSerial,10);
+	itoa(measurementData, measurementToSerial, 10);
+
+	// bug result: measurementData: 1530
+	// rssi : 530 - és statikusan az is marad.
+
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;
 	sendString("MeasurementNode DataLinkLayer elkulte a MyMeasurementPacket-et!");
@@ -147,14 +155,41 @@ void sendMyMeasurementToSerialPort(char *buffer){
 	sendChar(buffer[1]+'0');
 	sendChar(buffer[2]+'0');
 	sendChar(buffer[3]+'0');
+	sendChar(buffer[4]+'0');
+	sendChar(buffer[5]+'0');
 	LINE_BREAK;
-	sendString("MÉG NINCS KÉSZ");
+	sendString(measurementToSerial);
+	LINE_BREAK;
+	sendString(rssiToSerial);
+	LINE_BREAK;
+
+	sendString("To: ");
+	sendChar(buffer[0]+'0');
+	LINE_BREAK;
+	sendString("From: ");
+	sendChar(buffer[1]+'0');
+	LINE_BREAK;
+	sendString("Message Type (1 - NETWORKBUILDPACKET; 2 - MEASUREMENTPACKET): ");
+	sendChar(buffer[2]+'0');
+	LINE_BREAK;
+	sendString("Distance: ");
+	sendChar(buffer[3]+'0');
+	LINE_BREAK;
+	sendString("Parent Node: ");
+	sendChar(buffer[4]+'0');
+	LINE_BREAK;
+	sendString("Source: ");
+	sendChar(buffer[5]+'0');
+	LINE_BREAK;
+	sendString("Measurement Data: ");
+	sendString(measurementToSerial);
+	LINE_BREAK;
+	sendString("RSSI: ");
+	sendString(rssiToSerial);
 	LINE_BREAK;
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;
-	/*for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
-	memcpy(payload, rssi, rssilength);
-	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurementData);}*/
+
 
 }
 
@@ -211,7 +246,13 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer){
 
 	sendString(measurement);
 	sendString(rssi);
+	char measurementToSerial;
+	char rssiToSerial;
+	itoa(rssi, rssiToSerial, 10);
+	itoa(measurement, measurementToSerial, 10);
 
+	sendString(measurementToSerial);
+	sendString(rssiToSerial);
 
 	sendString("To: ");
 	sendChar(buffer[0]+'0');
@@ -232,10 +273,10 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer){
 	sendChar(buffer[5]+'0');
 	LINE_BREAK;
 	sendString("Measurement Data: ");
-	sendString(measurement);
+	sendString(measurementToSerial);
 	LINE_BREAK;
 	sendString("RSSI: ");
-	sendString(rssi);
+	sendString(rssiToSerial);
 	LINE_BREAK;
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;

@@ -112,10 +112,8 @@ int main(void) {
 		int networkBuildPacketCounter = 3;
 		if (BUTTON_PRESSED) {
 			TURN_OFF_BOTH_LED;
-			sendString("herecske");
 			parentNode = getParentNode();
 			distance = getDistance();
-
 			if (parentNode != 0) {
 				if (networkBuildPacketCounter > 0) {
 					__delay_cycles(1000);		// Wait for ADC Ref to settle
@@ -123,15 +121,9 @@ int main(void) {
 					__bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
 					ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
 					itoa(ADC_value, ADC_Temp, 10);
-					sendString("a");
 					sendMyMeasurementDLPacket(0, parentNode, source, distance, ADC_Temp,
 							0, txBuffer);
-					sendString("b");
 					TURN_ON_GREEN_LED;
-					/* itoa(txBuffer,txbuffertmp, 10);
-					sendString("TXBUFFER: 0");
-					sendString(txbuffertmp);
-					LINE_BREAK; */
 				}
 			}
 			__delay_cycles(2000);
