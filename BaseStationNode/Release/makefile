@@ -19,13 +19,13 @@ libUSER_OBJS.a \
 
 
 # All Target
-all: HierarhicalNode.elf
+all: BaseStationNode.elf
 
 # Tool invocations
-HierarhicalNode.elf: $(OBJS)
+BaseStationNode.elf: $(OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Linker'
-	msp430-gcc $(OBJS) -mmcu=msp430f2274 -o "HierarhicalNode.elf"
+	msp430-gcc $(OBJS) -mmcu=msp430f2274 -o "BaseStationNode.elf"
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -37,7 +37,7 @@ libUSER_OBJS.a: $(OBJS) $(USER_OBJS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(ARCHIVES)$(ELFS) HierarhicalNode.elf
+	-$(RM) $(ELFS)$(OBJS)$(ARCHIVES) BaseStationNode.elf
 	-@echo ' '
 
 .PHONY: all clean dependents

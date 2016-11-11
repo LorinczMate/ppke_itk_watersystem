@@ -18,9 +18,7 @@
 #include <msp430x22x4.h>
 
 // bit masks for P1 on the RF2500 target board
-#define LED1_MASK              0x01 // == BIT0	
-#define LED2_MASK              0x02 // == BIT1
-#define SW1_MASK               0x04 // == BIT2
+
 
 extern char paTable[];		// power table for C2500
 extern char paTableLen;
@@ -29,7 +27,7 @@ char txBuffer[50];  // Ez a küldött csomagok tárolására szolgáló buffer
 char rxBuffer[50];  // Ez a fogadott csomagok tárolására szolgáló buffer
 unsigned int i;
 
-char myAddress = '1';
+char myAddress = 1;
 
 int main(void) {
 	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
@@ -47,26 +45,13 @@ int main(void) {
 
 	// Configure ports -- switch inputs, LEDs, GDO0 to RX packet info from CCxxxx
 
-	// Input switch (on target board).
-	// Pushing switch pulls down the input bit SW1 and triggers an input interrupt
-	//   on port 1.  The handler sends a message to the second board.
-
 	P1REN |= SW1_MASK; //  enable pullups on SW1
 	P1OUT |= SW1_MASK;
-	//P1IES = SW1_MASK; //Int on falling edge
-	//P1IFG &= ~(SW1_MASK);//Clr flag for interrupt
-	//P1IE = SW1_MASK;//enable input interrupt
 
 	// Configure LED outputs on port 1
 	P1DIR = LED1_MASK + LED2_MASK; //Outputs
-	//P1OUT |= (LED1_MASK+LED2_MASK); // both lights on
 
 	// setup for interrupts related to receipt of a message from the CC2500
-	// A rádiómodul is válthat ki megszakítást
-	// Ha megnézzük, hogy mik ezek a regiszterek, kiderül, hogy ez is csak egy digitális bemenet a PORT2-n
-	// Ez azért van, mert a rádiómodul nem csak SPI interfészen keresztül tartja a kapcsolatot a chip-pel,
-	// hanem néhány digitális vonalon is, amiken keresztül különböző jelzéseket tud küldeni. (Pl.: Csomag jött)
-	// Itt a modul GD0 lábára váltódik ki az interrupt
 
 	TI_CC_GDO0_PxIES |= TI_CC_GDO0_PIN; // Int on falling edge of GDO0 (end of pkt)
 	TI_CC_GDO0_PxIFG &= ~TI_CC_GDO0_PIN;    // Clear Interrupt flag for GDO0 pin
@@ -76,22 +61,41 @@ int main(void) {
 	TI_CC_SPIStrobe(TI_CCxxx0_SRX);           // Initialize CCxxxx in RX mode.
 											  // When a pkt is received, it will
 											  // signal on GDO0 and wake CPU
-	//sendString("Hello\n\r");
-	//sendString(" BS woke up! \n\r");
+	TURN_OFF_BOTH_LED;
 
 	__bis_SR_register(GIE);                   // Enter LPM3, enable interrupts
+	DOUBLE_LINE_BREAK;
+	sendString("**************************************************************************************************");
+	LINE_BREAK;
+	sendString("                                      BASESTATION                                                 ");
+	LINE_BREAK;
+	sendString("**************************************************************************************************");
+	DOUBLE_LINE_BREAK;
+	sendString("Jelenleg a BaseStationNode van sorosportra csatakoztatva.");
+	LINE_BREAK;
+	sendString("A halozat epites elkezdesehez, kerlek nyomd meg a gombot a controlleren!");
+	LINE_BREAK;
+	TURN_ON_BOTH_LED;
 
 	initLayer(myAddress);
-
+	char txbuffertmp[20];
+	char networkBuilderPacketCounter = 0;
+	char networkBuilderPacketCounterString[5];
 	while (1) {
-		if (!(P1IN & BIT2)) {
-			sendNetworkBuildDLPacket('1', '0', '0', myAddress, 4, txBuffer);
+		if (BUTTON_PRESSED) {
+			TURN_OFF_BOTH_LED;
+			networkBuilderPacketCounter++;
+			txBuffer[0] = 0;
+			sendNetworkBuildDLPacket(1, 0, myAddress, txBuffer);
+			TURN_ON_GREEN_LED;
+			itoa(networkBuilderPacketCounter, networkBuilderPacketCounterString, 10);
+
+			LINE_BREAK;
+			sendString("Kiment a(z) ");
+			sendString(networkBuilderPacketCounterString);
+			sendString(" halozatepito uzenet!");
+			LINE_BREAK;
 			__delay_cycles(2000);
-			P1OUT |= BIT0;
-			while (!(P1IN & BIT2))
-				;
-		} else {
-			P1OUT &= ~BIT0;
 		}
 	}
 }

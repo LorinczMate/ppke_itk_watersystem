@@ -24,9 +24,7 @@ unsigned int ADC_value = 0;
 void ConfigureAdc(void);
 
 // bit masks for P1 on the RF2500 target board
-#define LED1_MASK              0x01 // == BIT0	
-#define LED2_MASK              0x02 // == BIT1
-#define SW1_MASK               0x04 // == BIT2
+
 
 extern char paTable[];		// power table for C2500
 extern char paTableLen;
@@ -35,7 +33,7 @@ char txBuffer[20];  // Ez a küldött csomagok tárolására szolgáló buffer
 char rxBuffer[20];  // Ez a fogadott csomagok tárolására szolgáló buffer
 unsigned int i;
 
-unsigned char myAddress = '3';
+unsigned char myAddress = 4;
 
 int main(void) {
 	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
@@ -86,7 +84,17 @@ int main(void) {
 	TI_CC_SPIStrobe(TI_CCxxx0_SRX);           // Initialize CCxxxx in RX mode.
 											  // When a pkt is received, it will
 											  // signal on GDO0 and wake CPU
-	sendString("Hello\n\r");
+	DOUBLE_LINE_BREAK;
+	sendString("**************************************************************************************************");
+	LINE_BREAK;
+	sendString("                                      MEASURENODE                                                 ");
+	LINE_BREAK;
+	sendString("**************************************************************************************************");
+	DOUBLE_LINE_BREAK;
+	sendString("Jelenleg egy MeasureNode van sorosportra csatakoztatva.");
+	LINE_BREAK;
+	sendString("A meresi adat kuldesehez, kerlek nyomd meg a gombot a controlleren!");
+	LINE_BREAK;
 
 	__bis_SR_register(GIE);                   // Enter LPM3, enable interrupts
 
@@ -94,10 +102,17 @@ int main(void) {
 	char parentNode;
 	char distance;
 	char source = myAddress;
+	char ADC_Temp[5];
+	char txbuffertmp[20];
 
+	TURN_OFF_BOTH_LED;
+
+	TURN_ON_BOTH_LED;
 	while (1) {
 		int networkBuildPacketCounter = 3;
-		if (!(P1IN & BIT2)) {
+		if (BUTTON_PRESSED) {
+			TURN_OFF_BOTH_LED;
+			sendString("herecske");
 			parentNode = getParentNode();
 			distance = getDistance();
 
@@ -107,17 +122,23 @@ int main(void) {
 					ADC10CTL0 |= ENC + ADC10SC;	// Sampling and conversion start
 					__bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
 					ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
-					itoa(ADC_value, txBuffer, 10);
-					sendMyMeasurementDLPacket('0', parentNode, source, distance,
-							4, txBuffer);
+					itoa(ADC_value, ADC_Temp, 10);
+					sendString("a");
+					sendMyMeasurementDLPacket(0, parentNode, source, distance, ADC_Temp,
+							0, txBuffer);
+					sendString("b");
+					TURN_ON_GREEN_LED;
+					/* itoa(txBuffer,txbuffertmp, 10);
+					sendString("TXBUFFER: 0");
+					sendString(txbuffertmp);
+					LINE_BREAK; */
 				}
 			}
 			__delay_cycles(2000);
-			P1OUT |= BIT0;
-			while (!(P1IN & BIT2))
+			TURN_OFF_BOTH_LED;
+			while (BUTTON_PRESSED)
 				;
 		} else {
-			P1OUT &= ~BIT0;
 		}
 	}
 }
