@@ -43,7 +43,7 @@ void receiveDLPacket(char length, char *payload){
    messageType = payload[2];
    distance = payload[3];
    parentnode = payload[4];
-
+   //EZT TÖRÖLJEM MÁR KI
    itoa(length, rssilengthtmp, 10);
    LINE_BREAK;
    sendString("length erteke: ");
@@ -54,7 +54,7 @@ void receiveDLPacket(char length, char *payload){
    sendString(rssilengthtmp);
    LINE_BREAK;
    sendString("end debug");
-
+   //IDÁIG - átnézni van e benne bármi értelmes - 2016.11.11
    if (to == myAddress){
       payload[length]=0;
       if(messageType == MEASUREMENTDATATYPE){
