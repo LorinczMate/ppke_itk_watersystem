@@ -94,6 +94,16 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, c
 	HB_DLLayerben kapott csomag:
 	to|from|messagetype|distance|parentnode|source|measurementData|rssi
 	----------------------------*/
+	sendString("a");
+	sendChar(rssilength+'0');
+	rssilength = 8;
+
+	sendString("b");
+	LINE_BREAK;
+	sendChar(rssilength+'0');
+	LINE_BREAK;
+	sendString("c");
+	LINE_BREAK;
 	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
 	memcpy(payload, rssi, rssilength);
 	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurementData);}

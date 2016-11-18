@@ -33,7 +33,7 @@ void initLayer(char _myAddress){
  * végig debugolni, hogy a to és a from hol csúszik el - itoaval együtt nézni
  * minden rétegben iratni hogy hol mit kap meg és mit küld el. - rssi-n bukik?
  */
-void receiveDLPacket(char length, char *payload){
+void receiveDLPacket(char length, char *payload, char rssi){
    LINE_BREAK;
    sendString("kapott csomag cimzettje: ");
    to=payload[0];
@@ -58,7 +58,7 @@ void receiveDLPacket(char length, char *payload){
    if (to == myAddress){
       payload[length]=0;
       if(messageType == MEASUREMENTDATATYPE){
-    	  receiveMeasurementDLLPacketFromSerialPort(length, payload);
+    	  receiveMeasurementDLLPacketFromSerialPort(length, payload, rssi);
       }
    }
 }
@@ -112,7 +112,7 @@ void sendNetworkPacketToSerialPort(char *buffer){
 }
 
 
-void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer){
+void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char rssi){
 	  source = buffer[5];
 
 
@@ -133,7 +133,7 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer){
 	sendChar(buffer[5]+'0');
 
 	memcpy(measurementData, buffer+6, 5); // szerintem 10 byte nem csak 5
-	memcpy(rssi, buffer+6+measurementDataLength, rssilength);
+	// memcpy(rssi, buffer+6+measurementDataLength, rssilength);
 
 	sendString(measurementData);
 	sendString(rssi);
@@ -162,7 +162,7 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer){
 	sendString(measurementData);
 	sendString(" | ");
 	sendString("RSSI: ");
-	sendString(rssi);
+	sendChar(rssi+'0');
 	/*for(int i=0;i<distancetmp;i++){
 	  itoa(rssi[i],rssilengthtmp,10);
 	  sendString(rssilengthtmp);

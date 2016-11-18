@@ -5,7 +5,6 @@
 #include "utility.h"
 
 char rxBuffer[40];
-
 // ISR for received packet
 // The ISR assumes the int came from the pin attached to GDO0 and therefore
 // does not check the other seven inputs.  Interprets this as a signal from
@@ -17,18 +16,18 @@ void port2_ISR (void){
    if (RFReceivePacket(rxBuffer,&len, status)){
 	   rxBuffer[len] = status[0];
 	   len+=1;
-      receivePPacket(len, rxBuffer);
+      receivePPacket(len, rxBuffer, status[0]); //// ??? status[0] vagy a status[1] az RSSI? Adatlap
    } 
    P2IFG &= ~TI_CC_GDO0_PIN;
 }
 
 
-void receivePPacket(char length, char *payload){
+void receivePPacket(char length, char *payload, char rssi){
 	TURN_ON_GREEN_LED;
    // Lehetne ide CRC kód ellenőrzést tenni, de most ezt hagyjuk
    // Egyszerűen csak továbbítjuk a felső rétegnek
 	LINE_BREAK;
-   receiveDLPacket(length, payload);
+   receiveDLPacket(length, payload, rssi);
 }
 
 /**
