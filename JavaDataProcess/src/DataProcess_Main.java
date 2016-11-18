@@ -12,9 +12,9 @@ public class DataProcess_Main {
 
 	public static void main(String[] args) throws ClassNotFoundException,
 			SQLException, InterruptedException, IOException {
-		ReadSerialPort readacm = new ReadSerialPort("/dev/ttyACM0");
-		
-		readacm.start();
+	//	ReadSerialPort readacm = new ReadSerialPort("/dev/ttyACM0");
+
+	//	readacm.start();
 		Thread.sleep(100);
 
 		//GraphicalUserInterface e = new GraphicalUserInterface();
@@ -23,6 +23,7 @@ public class DataProcess_Main {
 		 * PosgreSQL eléri része
 		*/
 		//readacm.threadEnabler = false;
+		/*
 		String database = "org.postgresql.Driver";
 		Class.forName(database);
 		String url = "jdbc:postgresql://localhost:5432/postgres";
@@ -52,7 +53,7 @@ public class DataProcess_Main {
 			readacm.throwActual();
 
 		}
-
+	*/
 	}
 
 }

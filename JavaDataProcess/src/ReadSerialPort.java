@@ -1,49 +1,50 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
 public class ReadSerialPort extends Thread {
-	private ArrayList<String> parentNodeID;
-	private ArrayList<String> from;
+
 	private ArrayList<String> to;
-	private ArrayList<String> packetSerialNumber;
-	private Matcher matcher;
-	private ArrayList<String> distance;
+	private ArrayList<String> from;
 	private ArrayList<String> messageType;
+	private ArrayList<String> distance;
+	private ArrayList<String> parentNode;
+	private ArrayList<String> source;
+	private ArrayList<String> measurementData;
+	private ArrayList<String> rssi;
+
+	private Matcher matcher;
 	private String portPath;
     private boolean threadEnabler = true;
-	private ArrayList<String> sourceID;
-	private ArrayList<String> measurementData;
-    
+
     public ReadSerialPort(String portPath){
     	this.portPath = portPath;
     }
 	
     String readFile(String fileName) throws IOException {
-    	/*
-    	 * void sendMeasurementDLPacket(char messageType, char to, char from, char payloadLength, char *payload){
-	arrayShiftRight(payloadLength, payload, source);
-	arrayShiftRight(payloadLength + 1, payload, parentnode);
-	arrayShiftRight(payloadLength + 2, payload, distance); //elsőként a vermünkbe a saját címünket tesszük, de ekkor a main-ben írt üzenet már benne van!
-	arrayShiftRight(payloadLength + 3, payload, messageType);
-	arrayShiftRight(payloadLength + 4, payload, from); //második elem a címzett címe lesz
-	arrayShiftRight(payloadLength + 5, payload, to);
-	sendPPacket(payloadLength + 6, payload);
-}
-    	 */
-		
+		/*
+		 * ----------------------------------------------------------
+		 *               BaseStation receiveDLPacket
+		 *|to|from|messageType|distance|parentNode|source|measurementData|rssi|
+		 * ----------------------------------------------------------
+		 */
+
 	    BufferedReader br = new BufferedReader(new FileReader(fileName));
 	    String line = null;
 	    ArrayList<String> read = new ArrayList<>();
-	    sourceID = new ArrayList<String>();
-	    parentNodeID = new ArrayList<String>();
-	    distance = new ArrayList<String>();
-	    messageType = new ArrayList<String>();
-	    from = new ArrayList<String>();
-	    to = new ArrayList<String>();
-	    measurementData = new ArrayList<String>();
+
+		to = new ArrayList<>();
+		from = new ArrayList<>();
+		messageType = new ArrayList<>();
+		distance = new ArrayList<>();
+		parentNode = new ArrayList<>();
+		source = new ArrayList<>();
+	    measurementData = new ArrayList<>();
+		rssi = new ArrayList<>();
+
 	    try {
 	        StringBuilder sb = new StringBuilder();
 			while (threadEnabler) {
@@ -54,28 +55,28 @@ public class ReadSerialPort extends Thread {
 				line = line.replaceAll("H", "");
 				
 				
-				String[] parts = line.split(";");
-				if(parts.length < 7) continue;
-				String ssourceID = parts[0];
-				String sparentNodeID = parts[1]; 
-				String sdistance = parts[2];
-				String smessageType = parts[3];
-				String sfrom = parts[4];
-				String sto = parts[5];
-				String smeasurementData = parts[6];
-				/*
-				 * 				int slqi = Integer.parseInt(parts[4]);
-				 *				int srssi = Integer.parseInt(parts[5]);
-				 */
+				String[] parts = line.split("|");
+				if(parts.length < 8) continue;
 
-				
-				sourceID.add(ssourceID);
-				parentNodeID.add(sparentNodeID);
-				distance.add(sdistance);
-				messageType.add(smessageType);
-				from.add(sfrom);
-				to.add(sto);
-				measurementData.add(smeasurementData);
+				//Hint: itt most mind integerként fog megjelenni -- Integer.parseInt(parts[n]);
+				//int srssi = Integer.parseInt(parts[5]);
+				String toString = parts[0];
+				String fromString = parts[1];
+				String messageTypeString = parts[2];
+				String distanceString = parts[3];
+				String parentNodeString = parts[4];
+				String sourceString = parts[5];
+				String measurementDataString = parts[6];
+				String rssiString = parts[7];
+
+				to.add(toString);
+				from.add(fromString);
+				messageType.add(messageTypeString);
+				distance.add(distanceString);
+				parentNode.add(parentNodeString);
+				source.add(sourceString);
+				measurementData.add(measurementDataString);
+				rssi.add(rssiString);
 			}
 	        return sb.toString();
 	    } finally {
@@ -85,7 +86,6 @@ public class ReadSerialPort extends Thread {
 	
 	@Override
 	public void run(){
-		
 		try {
 			readFile(portPath);
 			System.out.println("Véget ért a végtelen.");
@@ -95,98 +95,100 @@ public class ReadSerialPort extends Thread {
 		}
 	}
 
-	public ArrayList<String> getDate() {
-		return parentNodeID;
-	}
-	
+
 	public void throwActual(){
-		sourceID.remove(0);
-		parentNodeID.remove(0);
-		distance.remove(0);
-		messageType.remove(0);
-		from.remove(0);
 		to.remove(0);
+		from.remove(0);
+		messageType.remove(0);
+		distance.remove(0);
+		parentNode.remove(0);
+		source.remove(0);
 		measurementData.remove(0);
-	}
-	
-	public String getActualDate(){
-		if (parentNodeID.size()>0){
-			return getDate().get(0);
-		}else return null;
+		rssi.remove(0);
 	}
 
-	public ArrayList<String> getLqi() {
+	public ArrayList<String> getTo() {
+		return to;
+	}
+
+	public ArrayList<String> getFrom() {
 		return from;
 	}
-	
-	public String getActualLqi(){
-		if(from.size()>0){
-			return getLqi().get(0);
-		} else return null;
+
+	public ArrayList<String> getMessageType() {
+		return messageType;
+	}
+
+	public ArrayList<String> getDistance() {
+		return distance;
+	}
+
+	public ArrayList<String> getParentNode() {
+		return parentNode;
+	}
+
+	public ArrayList<String> getSource() {
+		return source;
+	}
+
+	public ArrayList<String> getMeasurementData() {
+		return measurementData;
 	}
 
 	public ArrayList<String> getRssi() {
-		return to;
+		return rssi;
 	}
-	
-	public String getActualRssi(){
-		if(to.size()>0){
-			return getLqi().get(0);
-		} else return null;
-	}
-	
-	public ArrayList<String> getPacketSerialNumber() {
-		return measurementData;
-	}
-	
-	public String getActualPacketSerialNumber(){
-		if(packetSerialNumber.size()>0){
-			return getLqi().get(0);
-		} else return null;
-	}
-
 
 	public Matcher getMatcher() {
 		return matcher;
 	}
 
-	public ArrayList<String> getEuvalue() {
-		return distance;
+	//értelme nagyon nincs, mert BS esetében a To minden esetben meg fog egyezni saját címével
+	public String getActualTo(){
+		if (to.size()>0){
+			return getTo().get(0);
+		}else return null;
 	}
-	
-	public String getActualEuvalue(){
-		if(distance.size()>0){
-			return getEuvalue().get(0);
+
+	public String getFrom(){
+		if(from.size()>0){
+			return getFrom().get(0);
 		} else return null;
 	}
 
-	public ArrayList<String> getBattery() {
-		return messageType;
-	}
-	
-	public int getBatterySize(){
-		return messageType.size();
-	}
-	
-	public String getActualBattery(){
-		if(getBatterySize()>0)
-			return getBattery().get(0);
-		else
-			return null;
+	public String getActualMessageType(){
+		if(messageType.size()>0){
+			return getMessageType().get(0);
+		} else return null;
 	}
 
-	public ArrayList<String> getSensorName() {
-		return sourceID;
+	public String getActualDistance(){
+		if(distance.size()>0){
+			return getDistance().get(0);
+		} else return null;
 	}
-	
-	public int getSensorNameSize(){
-		return sourceID.size();
+
+	public String getActualParentNode(){
+		if(parentNode.size()>0){
+			return getParentNode().get(0);
+		} else return null;
 	}
-	
-	public String getActualSensorName(){
-		if(getSensorNameSize()>0)
-			return getSensorName().get(0);
-		else
-			return null;
+
+	public String getActualSource(){
+		if(source.size()>0){
+			return getSource().get(0);
+		} else return null;
+	}
+
+	public String getActualMeasurementData(){
+		if(measurementData.size()>0){
+			return getMeasurementData().get(0);
+		} else return null;
+	}
+
+	public String getActualRssi(){
+		if(rssi.size()>0){
+			return getRssi().get(0);
+		} else return null;
 	}
 }

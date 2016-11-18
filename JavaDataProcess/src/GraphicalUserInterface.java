@@ -37,50 +37,36 @@ class Node{
 	    to = new ArrayList<String>();
 	    measurementData = new ArrayList<String>();*/
 	
-	public String sourceID;
-	public String parentNodeID;
-	public String distance;
-	public String messageType;
-	public int from;
-	public int to;
-	public int measurementData;
-	public Node(String sourceID, String parentNodeID, String distance, String messageType, int from, int to, int measurementData){
-		this.sourceID = sourceID;
-		this.parentNodeID = parentNodeID;
-		this.distance = distance;
-		this.messageType = messageType;
-		this.from = from;
+	private int to, from, messageType, distance, parentNode, source, measurementData, rssi;
+
+	public Node(int to, int from, int messageType, int distance, int parentNode, int source, int measurementData, int rssi) {
 		this.to = to;
+		this.from = from;
+		this.messageType = messageType;
+		this.distance = distance;
+		this.parentNode = parentNode;
+		this.source = source;
 		this.measurementData = measurementData;
+		this.rssi = rssi;
 	}
 }
 
 class DataParser{
 	MyTableModel model;
 	JFrame frame;
-	
+
 	public DataParser(MyTableModel model, JFrame frame){
 		this.model = model;
 		this.frame = frame;
 	}
 	
-	public void addNewPacket(String sourceID, String parentNodeID, String distance, String messageType, int from, int to, int measurementData){
-		
-//		String exploded[] = null;
-//		date = exploded[0];
-//		System.out.println(date + "************************************");
-//		euvalue = exploded[1];
-//		battery = exploded[2];
-//		String slqi = Integer.toString(lqi);
-//		slqi = exploded[3];
-//		String srssi = Integer.toString(rssi);
-//		srssi = exploded[4];
-//		String spacketSerialNumber = Integer.toString(packetSerialNumber);
-//		spacketSerialNumber = exploded[5];
-		
-		if (model.nodes.containsKey(sourceID)){
-			Node existent = model.nodes.get(sourceID);
-			existent.sourceID = sourceID;
+	public void addNewPacket(int to, int from, int messageType, int distance, int parentNode, int source, int measurementData, int rssi){
+		Node node = new Node(to, from, messageType, distance, parentNode, source, measurementData, rssi);
+
+		if (model.nodes.containsKey(source)){
+
+			Node existent = model.nodes.get(source);
+			existent.source = source;
 			existent.distance = distance;
 			existent.messageType = messageType;
 			existent.from = from;
@@ -128,7 +114,7 @@ class MyTableModel extends AbstractTableModel{
 	
 	@Override
 	public int getColumnCount() {
-		return 7;
+		return 8;
 	}
 
 	@Override
