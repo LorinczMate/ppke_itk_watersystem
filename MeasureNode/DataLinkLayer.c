@@ -94,16 +94,7 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, c
 	HB_DLLayerben kapott csomag:
 	to|from|messagetype|distance|parentnode|source|measurementData|rssi
 	----------------------------*/
-	sendString("a");
-	sendChar(rssilength+'0');
-	rssilength = 8;
 
-	sendString("b");
-	LINE_BREAK;
-	sendChar(rssilength+'0');
-	LINE_BREAK;
-	sendString("c");
-	LINE_BREAK;
 	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
 	memcpy(payload, rssi, rssilength);
 	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurementData);}
@@ -145,10 +136,7 @@ void sendNetworkPacketToSerialPort(char *buffer){
 }
 
 void sendMyMeasurementToSerialPort(char *buffer, char *measurementData, char *rssi){
-	char rssiToSerial[20];
-	char measurementToSerial[10];
-	itoa(rssi,rssiToSerial,10);
-	itoa(measurementData, measurementToSerial, 10);
+
 
 	// bug result: measurementData: 1530
 	// rssi : 530 - és statikusan az is marad.
@@ -168,9 +156,9 @@ void sendMyMeasurementToSerialPort(char *buffer, char *measurementData, char *rs
 	sendChar(buffer[4]+'0');
 	sendChar(buffer[5]+'0');
 	LINE_BREAK;
-	sendString(measurementToSerial);
+	sendString(measurementData);
 	LINE_BREAK;
-	sendString(rssiToSerial);
+	sendString(rssi);
 	LINE_BREAK;
 
 	sendString("To: ");
@@ -192,10 +180,10 @@ void sendMyMeasurementToSerialPort(char *buffer, char *measurementData, char *rs
 	sendChar(buffer[5]+'0');
 	LINE_BREAK;
 	sendString("Measurement Data: ");
-	sendString(measurementToSerial);
+	sendString(measurementData);
 	LINE_BREAK;
 	sendString("RSSI: ");
-	sendString(rssiToSerial);
+	sendString(rssi);
 	LINE_BREAK;
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;
