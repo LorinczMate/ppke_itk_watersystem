@@ -88,7 +88,6 @@ public class ReadSerialPort {
         try {
             readFile(portPath);
             System.err.println("End of Read Serial Port");
-            System.out.println("Véget ért a végtelen.");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
