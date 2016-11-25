@@ -7,7 +7,8 @@ import java.util.regex.Matcher;
 /**
  * Created by marci on 2016.11.25..
  */
-public class ReadSerialPort {
+public class ReadSerialPort extends Thread{
+
     private ArrayList<String> to;
     private ArrayList<String> from;
     private ArrayList<String> messageType;
@@ -19,6 +20,7 @@ public class ReadSerialPort {
     private Matcher matcher;
     private String portPath;
     private boolean threadEnabler = true;
+
     public ReadSerialPort(String portPath) {
         this.portPath = portPath;
     }
@@ -28,6 +30,7 @@ public class ReadSerialPort {
 		 * ----------------------------------------------------------
 		 *               BaseStation receiveDLPacket
 		 *|to|from|messageType|distance|parentNode|source|measurementData|rssi|
+		 * // SQL-ben a name == source
 		 * ----------------------------------------------------------
 		 */
 
@@ -49,33 +52,36 @@ public class ReadSerialPort {
         while (threadEnabler) {
             line = br.readLine();
             System.out.println(line);
-            read.add(line);
-            line = line.replaceAll("@", "");
-            line = line.replaceAll("H", "");
+            if(line.equalsIgnoreCase("DLL payload: ")){
+                read.add(line);
+                line = line.replaceAll("@", "");
+                line = line.replaceAll("H", "");
 
 
-            String[] parts = line.split("|");
-            if(parts.length < 8) continue;
+                String[] parts = line.split("|");
+                if(parts.length < 8) continue;
 
-            //Hint: itt most mind integerként fog megjelenni -- Integer.parseInt(parts[n]);
-            //int srssi = Integer.parseInt(parts[5]);
-            String toString = parts[0];
-            String fromString = parts[1];
-            String messageTypeString = parts[2];
-            String distanceString = parts[3];
-            String parentNodeString = parts[4];
-            String sourceString = parts[5];
-            String measurementDataString = parts[6];
-            String rssiString = parts[7];
+                //Hint: itt most mind integerként fog megjelenni -- Integer.parseInt(parts[n]);
+                //int srssi = Integer.parseInt(parts[5]);
+                String toString = parts[0];
+                String fromString = parts[1];
+                String messageTypeString = parts[2];
+                String distanceString = parts[3];
+                String parentNodeString = parts[4];
+                String sourceString = parts[5];
+                String measurementDataString = parts[6];
+                String rssiString = parts[7];
 
-            to.add(toString);
-            from.add(fromString);
-            messageType.add(messageTypeString);
-            distance.add(distanceString);
-            parentNode.add(parentNodeString);
-            source.add(sourceString);
-            measurementData.add(measurementDataString);
-            rssi.add(rssiString);
+                to.add(toString);
+                from.add(fromString);
+                messageType.add(messageTypeString);
+                distance.add(distanceString);
+                parentNode.add(parentNodeString);
+                source.add(sourceString);
+                measurementData.add(measurementDataString);
+                rssi.add(rssiString);
+            }
+
         }
         return sb.toString();
     } finally {
@@ -149,7 +155,7 @@ public class ReadSerialPort {
         }else return null;
     }
 
-    public String getFrom(){
+    public String getActualFrom(){
         if(from.size()>0){
             return getFrom().get(0);
         } else return null;

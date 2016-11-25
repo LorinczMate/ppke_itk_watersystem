@@ -14,6 +14,7 @@ public class InsertDataIntoDataBase {
     private String password;
     private Connection conn;
     private Statement stmt;
+    private DataSource dataSource;
 
     public InsertDataIntoDataBase(String dataBasePath, String url, String username, String password) {
         this.dataBasePath = dataBasePath;
@@ -44,31 +45,26 @@ public class InsertDataIntoDataBase {
         }
     }
     public void TestInsertListener() throws InterruptedException, IOException, SQLException {
-        String name, source, from, distance, measurementData, rssi, data;
+        dataSource = new ConsolSource();
         while(true){
-            Thread.sleep(1000);
-            System.out.println("Írja be az adatbázisba írni kívánt adatokat a következő formában: \n name,source,from,distance,measurementData,rssi");
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            data = br.readLine();
-            String[] parts = data.split(",");
-            name = parts[0];
-            source = parts[1];
-            from = parts[2];
-            distance = parts[3];
-            measurementData = parts[4];
-            rssi = parts[5];
-
-            System.out.println("select id from sensors where name = '" + source + "'");
-            ResultSet rset = stmt.executeQuery("select id from sensors where name = '" + source + "'");
-            if (readacm.getActualSource() == null) continue;
+            Integer sensorsid;
+            Measure measure = dataSource.getNextMeasure();
+            ResultSet rset = stmt.executeQuery("select sensorsid from sensors where name = '" + measure.getName() + "'"); // name lehet unique
             if (rset.next()){
-                stmt.execute("insert into measures(sensorid, soucre, from, distance, measurementData, rssi)");
-            } else{
-                stmt.execute("insert into sensors (name) VALUES (" + "''" + source + "');");
+                sensorsid = rset.getInt("sensorsid");
+            } else {
+                ResultSet lastInsertedID = stmt.executeQuery("insert into sensors (name) VALUES ('" + measure.getName() + "') RETURNING sensorsid;"); // ide kell beszúrni a többi értéket
+                lastInsertedID.next();
+                sensorsid = lastInsertedID.getInt("sensorsid");
             }
-            readacm.throwActual();
-
-
+            String insertMeasureQuery = "insert into measures(source, from_, distance, measurement_data, rssi) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement insertMeasure = conn.prepareStatement(insertMeasureQuery);
+            insertMeasure.setInt(1,sensorsid);
+            insertMeasure.setInt(2,measure.getFrom());
+            insertMeasure.setInt(3,measure.getDistance());
+            insertMeasure.setInt(4,measure.getMeasurementData());
+            insertMeasure.setInt(5,measure.getRssi());
+            insertMeasure.execute();
         }
     }
 }
