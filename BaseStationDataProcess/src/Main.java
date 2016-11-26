@@ -12,6 +12,6 @@ public class Main {
         InsertDataIntoDataBase insertToDB = new InsertDataIntoDataBase("org.postgresql.Driver",
                 "jdbc:postgresql://localhost:5432/postgres", "szama7", "szama7");
         insertToDB.BuildConnection();
-        insertToDB.TestInsertListener();
+        insertToDB.ConsolInsertListener();
     }
 }
