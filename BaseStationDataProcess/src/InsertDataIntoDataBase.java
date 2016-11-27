@@ -7,7 +7,6 @@ import java.sql.*;
  * Created by marci on 2016.11.25..
  */
 public class InsertDataIntoDataBase {
-    private ReadSerialPort readacm;
     private String dataBasePath;
     private String url;
     private String username;
@@ -30,14 +29,14 @@ public class InsertDataIntoDataBase {
     }
 
     public void SerialportInsertListener() throws SQLException, InterruptedException, IOException {
-        dataSource = new SerialportSource();
-        while(true){
+        dataSource = new SerialportSource("/dev/ttyACM0");
+        while(true) {
             Thread.sleep(1000);
             Measure measure = dataSource.getNextMeasure();
             InsertListener(measure);
-            readacm.throwActual();
         }
     }
+
     public void ConsolInsertListener() throws InterruptedException, SQLException, IOException {
         dataSource = new ConsolSource();
         while(true){

@@ -6,18 +6,20 @@ import java.io.InputStreamReader;
  * Created by marci on 2016.11.25..
  */
 public class ConsolSource implements DataSource {
+    private String  data;
 
-    @Override
-    public Measure getNextMeasure() {
-        String  data;
+    public ConsolSource() {
         System.out.println("Írja be az adatbázisba írni kívánt adatokat a következő formában: \n source,from,distance,measurementData,rssi");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try {
             data = br.readLine();
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+    }
+
+    @Override
+    public Measure getNextMeasure() {
         String[] parts = data.split(",");
         int name = Integer.parseInt(parts[0]);
         int from = Integer.parseInt(parts[1]);
