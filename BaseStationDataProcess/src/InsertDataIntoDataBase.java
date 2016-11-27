@@ -29,26 +29,26 @@ public class InsertDataIntoDataBase {
         stmt = conn.createStatement();
     }
 
-        //ezt a mainben egy while(true)-ba tenni majd.
-    public void SerialportInsertListener() throws SQLException, InterruptedException {
+    public void SerialportInsertListener() throws SQLException, InterruptedException, IOException {
+        dataSource = new SerialportSource();
         while(true){
             Thread.sleep(1000);
-            System.out.println("select id from sensors where name = '" + readacm.getActualSource() + "'");
-            ResultSet rset = stmt.executeQuery("select id from sensors where name = '" + readacm.getActualSource() + "'");
-            if (readacm.getActualSource() == null) continue;
-            if (rset.next()){
-                stmt.execute("insert into measures(sensorid, soucre, from, distance, measurementData, rssi)");
-            } else{
-                stmt.execute("insert into sensors (name) VALUES (" + "''" + readacm.getActualSource() + "');");
-            }
+            Measure measure = dataSource.getNextMeasure();
+            InsertListener(measure);
             readacm.throwActual();
         }
     }
-    public void ConsolInsertListener() throws InterruptedException, IOException, SQLException {
+    public void ConsolInsertListener() throws InterruptedException, SQLException, IOException {
         dataSource = new ConsolSource();
         while(true){
-            Integer sensorsid;
             Measure measure = dataSource.getNextMeasure();
+            InsertListener(measure);
+        }
+
+    }
+
+    public void InsertListener(Measure measure) throws InterruptedException, IOException, SQLException{
+            Integer sensorsid;
             String existsQuery = "select sensorsid from sensors where name = ?"; // name lehet unique az adatbázisban
             PreparedStatement exists = conn.prepareStatement(existsQuery);
             exists.setInt(1,measure.getName());
@@ -56,13 +56,12 @@ public class InsertDataIntoDataBase {
             if (rset.next()){
                 sensorsid = rset.getInt("sensorsid");
             } else {
-                String lastInsertedIDQuery = "insert into sensors (name) VALUES (?,?,?,?,?) RETURNING sensorsid;";
+                String lastInsertedIDQuery = "insert into sensors (name, distance, min_val, max_val) VALUES (?,?,?,?) RETURNING sensorsid;";
                 PreparedStatement lastInsertedID = conn.prepareStatement(lastInsertedIDQuery);
                 lastInsertedID.setInt(1, measure.getName());
                 lastInsertedID.setInt(2, measure.getDistance());
                 lastInsertedID.setInt(3, 0);
-                lastInsertedID.setInt(4, 0);
-                lastInsertedID.setInt(5, 1023);
+                lastInsertedID.setInt(4, 1023);
                 ResultSet lastInsertedIDResult = lastInsertedID.executeQuery(); // ide kell beszúrni a többi értéket
                 lastInsertedIDResult.next();
                 sensorsid = lastInsertedIDResult.getInt("sensorsid");
@@ -75,6 +74,5 @@ public class InsertDataIntoDataBase {
             insertMeasure.setInt(4,measure.getMeasurementData());
             insertMeasure.setInt(5,measure.getRssi());
             insertMeasure.execute();
-        }
     }
 }
