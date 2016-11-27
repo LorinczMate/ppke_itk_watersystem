@@ -1,5 +1,5 @@
+//#define VERBOSE
 #include "PhysicLayer.h"
-
 #include "include.h"
 #include "DataLinkLayer.h"
 #include "utility.h"
@@ -36,7 +36,9 @@ void receivePPacket(char length, char *payload, char rssi){
 */
 void sendPPacket(char length, char *payload){
    arrayShiftRight(length, payload, length);
+#ifdef VERBOSE
    sendPPacketToSerialPort(payload);
+#endif
    RFSendPacket(payload, length+1);
 }
 

@@ -1,3 +1,4 @@
+//#define VERBOSE
 #include "DataLinkLayer.h"
 #include "utility.h"
 #include "PhysicLayer.h"
@@ -17,7 +18,7 @@ char distance;
 char parentnode;
 char source;
 char measurementData[10];
-char rssi[20];
+//char rssi[20];
 unsigned int rssilength;
 char rssilengthtmp[10];
 unsigned int measurementDataLength = 10;
@@ -34,6 +35,7 @@ void initLayer(char _myAddress){
  * minden rétegben iratni hogy hol mit kap meg és mit küld el. - rssi-n bukik?
  */
 void receiveDLPacket(char length, char *payload, char rssi){
+#ifdef VERBOSE
    LINE_BREAK;
    sendString("kapott csomag cimzettje: ");
    to=payload[0];
@@ -55,9 +57,13 @@ void receiveDLPacket(char length, char *payload, char rssi){
    LINE_BREAK;
    sendString("end debug");
    //IDÁIG - átnézni van e benne bármi értelmes - 2016.11.11
+   //kizárt dolog, hogy van értelmes benne, menjen a kukába .
+   //ide kéne egy rész hogy jelezzük hogy megkapta a BS a MeasureNodetól kapott hálózat építő üzenet propagálását broadcast üzenetként - 2016.11.27
+#endif
    if (to == myAddress){
       payload[length]=0;
       if(messageType == MEASUREMENTDATATYPE){
+    	  sendString("test");
     	  receiveMeasurementDLLPacketFromSerialPort(length, payload, rssi);
       }
    }
@@ -73,7 +79,9 @@ void sendNetworkBuildDLPacket(char messageType, char distance, char myAddress, c
    arrayShiftRight(payloadLength++, buffer, messageType);
    arrayShiftRight(payloadLength++, buffer, myAddress);
    arrayShiftRight(payloadLength++, buffer, BROADCASTPACKET);
+#ifdef VERBOSE
    sendNetworkPacketToSerialPort(buffer);
+#endif
    sendPPacket(payloadLength, buffer);
 }
 
@@ -113,10 +121,10 @@ void sendNetworkPacketToSerialPort(char *buffer){
 
 
 void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char rssi){
-	  source = buffer[5];
-
-
-
+	memcpy(measurementData, buffer+6, 5); // szerintem 10 byte nem csak 5
+	// memcpy(rssi, buffer+6+measurementDataLength, rssilength);
+	sendString("asdasd");
+#ifdef VERBOSE
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;
 	sendString("DataLinkLayer BaseStation uzenetet kapott!");
@@ -131,13 +139,8 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char r
 	sendChar(buffer[3]+'0');
 	sendChar(buffer[4]+'0');
 	sendChar(buffer[5]+'0');
-
-	memcpy(measurementData, buffer+6, 5); // szerintem 10 byte nem csak 5
-	// memcpy(rssi, buffer+6+measurementDataLength, rssilength);
-
 	sendString(measurementData);
 	sendString(rssi);
-
 	DOUBLE_LINE_BREAK;
 
 	sendString("To: ");
@@ -162,7 +165,7 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char r
 	sendString(measurementData);
 	sendString(" | ");
 	sendString("RSSI: ");
-	sendChar(rssi+'0');
+	sendChar(rssi);
 	/*for(int i=0;i<distancetmp;i++){
 	  itoa(rssi[i],rssilengthtmp,10);
 	  sendString(rssilengthtmp);
@@ -170,7 +173,40 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char r
 	}*/
 	LINE_BREAK;
 	sendString("--------------------------------------------------------------------------------------------------");
+	LINE_BREAK;
+	sendChar(buffer[0]+'0');
+	sendString(",");
+	sendChar(buffer[1]+'0');
+	sendString(",");
+	sendChar(buffer[2]+'0');
+	sendString(",");
+	sendChar(buffer[3]+'0');
+	sendString(",");
+	sendChar(buffer[4]+'0');
+	sendString(",");
+	sendChar(buffer[5]+'0');
+	sendString(",");
+	sendString(measurementData);
+	sendString(",");
+	sendChar(rssi+'0');
 	DOUBLE_LINE_BREAK;
+#else
+	sendChar(buffer[0]+'0');
+	sendString(",");
+	sendChar(buffer[1]+'0');
+	sendString(",");
+	sendChar(buffer[2]+'0');
+	sendString(",");
+	sendChar(buffer[3]+'0');
+	sendString(",");
+	sendChar(buffer[4]+'0');
+	sendString(",");
+	sendChar(buffer[5]+'0');
+	sendString(",");
+	sendString(measurementData);
+	sendString(",");
+	sendChar(rssi+'0');
+#endif
 }
 
 

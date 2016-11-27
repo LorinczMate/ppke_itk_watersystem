@@ -11,6 +11,7 @@
 //  July 2006
 //----------------------------------------------------------------------------
 
+//#define VERBOSE
 #include <stdlib.h>
 #include "include.h"
 #include "UART.h"
@@ -64,6 +65,7 @@ int main(void) {
 	TURN_OFF_BOTH_LED;
 
 	__bis_SR_register(GIE);                   // Enter LPM3, enable interrupts
+#ifdef VERBOSE
 	DOUBLE_LINE_BREAK;
 	sendString("**************************************************************************************************");
 	LINE_BREAK;
@@ -76,7 +78,7 @@ int main(void) {
 	sendString("A halozat epites elkezdesehez, kerlek nyomd meg a gombot a controlleren!");
 	LINE_BREAK;
 	TURN_ON_BOTH_LED;
-
+#endif
 	initLayer(myAddress);
 	char txbuffertmp[20];
 	char networkBuilderPacketCounter = 0;
@@ -89,12 +91,13 @@ int main(void) {
 			sendNetworkBuildDLPacket(1, 0, myAddress, txBuffer);
 			TURN_ON_GREEN_LED;
 			itoa(networkBuilderPacketCounter, networkBuilderPacketCounterString, 10);
-
+#ifdef VERBOSE
 			LINE_BREAK;
 			sendString("Kiment a(z) ");
 			sendString(networkBuilderPacketCounterString);
 			sendString(" halozatepito uzenet!");
 			LINE_BREAK;
+#endif
 			__delay_cycles(2000);
 		}
 	}
