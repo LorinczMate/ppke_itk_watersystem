@@ -35,36 +35,20 @@ void initLayer(char _myAddress){
  * minden rétegben iratni hogy hol mit kap meg és mit küld el. - rssi-n bukik?
  */
 void receiveDLPacket(char length, char *payload, char rssi){
+	to = payload[0];
+	from = payload[1];
+	messageType = payload[2];
+	distance = payload[3];
+	parentnode = payload[4];
 #ifdef VERBOSE
-   LINE_BREAK;
-   sendString("kapott csomag cimzettje: ");
-   to=payload[0];
-   sendChar(to);
-
-   from = payload[1];
-   messageType = payload[2];
-   distance = payload[3];
-   parentnode = payload[4];
-   //EZT TÖRÖLJEM MÁR KI
-   itoa(length, rssilengthtmp, 10);
-   LINE_BREAK;
-   sendString("length erteke: ");
-   sendString(rssilengthtmp);
-   LINE_BREAK;
-   itoa(rssilength, rssilengthtmp, 10);
-   sendString("rssilength erteke: ");
-   sendString(rssilengthtmp);
-   LINE_BREAK;
-   sendString("end debug");
-   //IDÁIG - átnézni van e benne bármi értelmes - 2016.11.11
-   //kizárt dolog, hogy van értelmes benne, menjen a kukába .
-   //ide kéne egy rész hogy jelezzük hogy megkapta a BS a MeasureNodetól kapott hálózat építő üzenet propagálását broadcast üzenetként - 2016.11.27
+	if(to== BROADCASTPACKET){
+		receiveBroadcastPacket(length, payload);
+	}
 #endif
    if (to == myAddress){
       payload[length]=0;
       if(messageType == MEASUREMENTDATATYPE){
-    	  sendString("test");
-    	  receiveMeasurementDLLPacketFromSerialPort(length, payload, rssi);
+    	  receiveMeasurementDLPacket(length, payload, rssi);
       }
    }
 }
@@ -120,14 +104,15 @@ void sendNetworkPacketToSerialPort(char *buffer){
 }
 
 
-void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char rssi){
+void receiveMeasurementDLPacket(char length, char *buffer, unsigned char rssi){
 	memcpy(measurementData, buffer+6, 5); // szerintem 10 byte nem csak 5
 	// memcpy(rssi, buffer+6+measurementDataLength, rssilength);
-	sendString("asdasd");
+	char rssiToSerial[5];
+	itoa(rssi, rssiToSerial,10);
 #ifdef VERBOSE
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;
-	sendString("DataLinkLayer BaseStation uzenetet kapott!");
+	sendString("A BaseStationDataLinkLayer mérési uzenetet kapott!");
 	LINE_BREAK;
 	sendString("to|from|messagetype|distance|parentnode|source|measurementData|rssi");
 	LINE_BREAK;
@@ -140,7 +125,7 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char r
 	sendChar(buffer[4]+'0');
 	sendChar(buffer[5]+'0');
 	sendString(measurementData);
-	sendString(rssi);
+	sendString(rssiToSerial);
 	DOUBLE_LINE_BREAK;
 
 	sendString("To: ");
@@ -165,7 +150,7 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char r
 	sendString(measurementData);
 	sendString(" | ");
 	sendString("RSSI: ");
-	sendChar(rssi);
+	sendString(rssiToSerial);
 	/*for(int i=0;i<distancetmp;i++){
 	  itoa(rssi[i],rssilengthtmp,10);
 	  sendString(rssilengthtmp);
@@ -188,8 +173,9 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char r
 	sendString(",");
 	sendString(measurementData);
 	sendString(",");
-	sendChar(rssi+'0');
+	sendString(rssiToSerial);
 	DOUBLE_LINE_BREAK;
+
 #else
 	sendChar(buffer[0]+'0');
 	sendString(",");
@@ -205,8 +191,56 @@ void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer, char r
 	sendString(",");
 	sendString(measurementData);
 	sendString(",");
-	sendChar(rssi+'0');
+	sendString(rssiToSerial);
 #endif
+}
+
+void receiveBroadcastPacket(char length, char *buffer){
+	sendString("--------------------------------------------------------------------------------------------------");
+	LINE_BREAK;
+	sendString("A BaseStationDataLinkLayer broadcast uzenetet kapott!");
+	LINE_BREAK;
+	sendString("BROADCASTPACKET|myAddress|messageType|distance|");
+	LINE_BREAK;
+
+	to = buffer[0];
+	from = buffer[1];
+	messageType = buffer[2];
+	distance = buffer[3];
+	parentnode = buffer[4];
+
+	sendChar(buffer[0]+'0');
+	sendChar(buffer[1]+'0');
+	sendChar(buffer[2]+'0');
+	sendChar(buffer[3]+'0');
+	sendChar(buffer[4]+'0');
+	sendChar(buffer[5]+'0');
+
+	DOUBLE_LINE_BREAK;
+
+	sendString("Length: ");
+	sendChar(length + '0');
+	LINE_BREAK;
+	sendString("To: ");
+	sendChar(buffer[0]+'0');
+	sendString(" | ");
+	sendString("From: ");
+	sendChar(buffer[1]+'0');
+	sendString(" | ");
+	sendString("Message Type: ");
+	sendChar(buffer[2]+'0');
+	sendString(" | ");
+	sendString("Distance: ");
+	sendChar(buffer[3]+'0');
+	sendString(" | ");
+	sendString("Parent Node: ");
+	sendChar(buffer[4]+'0');
+	sendString(" | ");
+	LINE_BREAK;
+	sendString("--------------------------------------------------------------------------------------------------");
+	LINE_BREAK;
+
+
 }
 
 

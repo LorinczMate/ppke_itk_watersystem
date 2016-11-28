@@ -8,22 +8,32 @@ import java.util.ArrayList;
  * Created by marci on 2016.11.25..
  */
 public class SerialportSource implements DataSource {
-    private String line;
+    private BufferedReader br;
     private String to, from, messageType, distance, parentNode, source, measurementData, rssi;
 
-    public SerialportSource(String portPath) throws FileNotFoundException {
-        System.out.println("SerialPortról történő olvasás kezdődik \n");
-        BufferedReader br = new BufferedReader(new FileReader(portPath));
-        StringBuilder sb = new StringBuilder();
+    public SerialportSource(String portPath)  {
         try {
-            line = br.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+            br = new BufferedReader(new FileReader(portPath));
+        } catch (FileNotFoundException e) {
+            System.err.println("Hibás a sorosport elérési útvonala.");
+            System.exit(1);
         }
     }
 
     @Override
     public Measure getNextMeasure() {
+        System.out.println("SerialPortról történő olvasás kezdődik \n");
+        String line = "";
+        while (line.equalsIgnoreCase("")) {
+            try {
+                line = br.readLine();
+                System.out.println("de");
+                System.out.println(line);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        //blokkoló olvasás.
         line = line.replaceAll("@","");
         line = line.replaceAll("H","");
         String[] parts = line.split(",");

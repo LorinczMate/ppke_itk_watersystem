@@ -45,7 +45,7 @@ void receiveDLPacket(char length, char *payload, char rssi){
 			source = payload[5];
 			from = myAddress;
 			to = parentnode;
-			receiveMeasurementDLLPacketFromSerialPort(length, payload);
+			receiveMeasurementDLPacket(length, payload);
 			//így ebben a legutolsó RSSI még nem kerül bele!
 			arrayShiftRight(length-6, payload+6, rssi);
 			length++;
@@ -222,7 +222,7 @@ void receiveNetworkBuildDLLPacketFromSerialPort(char *buffer){
    LINE_BREAK;
 }
 
-void receiveMeasurementDLLPacketFromSerialPort(char length, char *buffer){
+void receiveMeasurementDLPacket(char length, char *buffer){
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;
 	sendString("DataLinkLayer Measurement uzenetet kapott!");

@@ -5,18 +5,23 @@ import java.sql.SQLException;
  * Created by marci on 2016.11.25..
  */
 public class Main {
-    private static final boolean enableFast = true;
-    public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException, InterruptedException {
-        InsertDataIntoDataBase insertToDB = new InsertDataIntoDataBase("org.postgresql.Driver",
+    private static final boolean readFromSerialPort = true;
+    public static void main(String[] args)  {
+        MeasureStore insertToDB = new MeasureStore("org.postgresql.Driver",
                 "jdbc:postgresql://localhost:5432/postgres", "szama7", "szama7");
-        insertToDB.BuildConnection();
-
-        if(enableFast){
-            insertToDB.SerialportInsertListener();
-        }else {
-            insertToDB.ConsolInsertListener();
+        try {
+            insertToDB.BuildConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(1);
         }
 
-
+        DataSource dataSource;
+        if(readFromSerialPort){
+            dataSource = new SerialportSource("/dev/ttyACM0");
+        }else {
+            dataSource = new ConsolSource();
+        }
+        insertToDB.startDataListener(dataSource);
     }
 }

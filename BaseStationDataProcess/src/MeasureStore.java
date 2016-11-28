@@ -1,12 +1,10 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.*;
 
 /**
  * Created by marci on 2016.11.25..
  */
-public class InsertDataIntoDataBase {
+public class MeasureStore {
     private String dataBasePath;
     private String url;
     private String username;
@@ -15,38 +13,36 @@ public class InsertDataIntoDataBase {
     private Statement stmt;
     private DataSource dataSource;
 
-    public InsertDataIntoDataBase(String dataBasePath, String url, String username, String password) {
+    public MeasureStore(String dataBasePath, String url, String username, String password) {
         this.dataBasePath = dataBasePath;
         this.url = url;
         this.username = username;
         this.password = password;
     }
 
-    public void BuildConnection() throws SQLException, ClassNotFoundException {
-        Class.forName(dataBasePath);
+    public void BuildConnection() throws SQLException {
+        try{
+            Class.forName(dataBasePath);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Nincs telepítve a postgresql driver a JDBC-hez.");
+            System.exit(1);
+        }
         conn = DriverManager.getConnection(url, username, password);
         stmt = conn.createStatement();
     }
 
-    public void SerialportInsertListener() throws SQLException, InterruptedException, IOException {
-        dataSource = new SerialportSource("/dev/ttyACM0");
+    public void startDataListener(DataSource dataSource)  {
         while(true) {
-            Thread.sleep(1000);
             Measure measure = dataSource.getNextMeasure();
-            InsertListener(measure);
+            try {
+                insertMeasureIntoDataBase(measure);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void ConsolInsertListener() throws InterruptedException, SQLException, IOException {
-        dataSource = new ConsolSource();
-        while(true){
-            Measure measure = dataSource.getNextMeasure();
-            InsertListener(measure);
-        }
-
-    }
-
-    public void InsertListener(Measure measure) throws InterruptedException, IOException, SQLException{
+    private void insertMeasureIntoDataBase(Measure measure) throws SQLException {
             Integer sensorsid;
             String existsQuery = "select sensorsid from sensors where name = ?"; // name lehet unique az adatbázisban
             PreparedStatement exists = conn.prepareStatement(existsQuery);
