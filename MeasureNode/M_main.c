@@ -12,9 +12,9 @@
 //----------------------------------------------------------------------------
 
 #include <stdlib.h>
-#include "include.h"
+#include "M_include.h"
 #include "UART.h"
-#include "DataLinkLayer.h"
+#include "M_DataLinkLayer.h"
 #include "msp430x22x4.h"
 
 // Global variables
