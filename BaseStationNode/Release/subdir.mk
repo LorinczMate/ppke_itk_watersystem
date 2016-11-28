@@ -4,19 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../BS_DataLinkLayer.c \
+../BS_PhysicLayer.c \
+../BS_main.c \
 ../CC2500.c \
-../HB_DataLinkLayer.c \
-../HB_PhysicLayer.c \
-../HB_main.c \
 ../TI_CC_spi.c \
 ../UART.c \
 ../utility.c 
 
 OBJS += \
+./BS_DataLinkLayer.o \
+./BS_PhysicLayer.o \
+./BS_main.o \
 ./CC2500.o \
-./HB_DataLinkLayer.o \
-./HB_PhysicLayer.o \
-./HB_main.o \
 ./TI_CC_spi.o \
 ./UART.o \
 ./utility.o 

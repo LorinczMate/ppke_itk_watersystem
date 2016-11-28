@@ -11,11 +11,11 @@
 //  July 2006
 //----------------------------------------------------------------------------
 
-//#define VERBOSE
+#define VERBOSE
 #include <stdlib.h>
-#include "include.h"
+#include "BS_include.h"
 #include "UART.h"
-#include "DataLinkLayer.h"
+#include "BS_DataLinkLayer.h"
 #include <msp430x22x4.h>
 
 // bit masks for P1 on the RF2500 target board
