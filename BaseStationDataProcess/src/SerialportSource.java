@@ -9,7 +9,6 @@ import java.util.ArrayList;
  */
 public class SerialportSource implements DataSource {
     private BufferedReader br;
-    private String to, from, messageType, distance, parentNode, source, measurementData, rssi;
 
     public SerialportSource(String portPath)  {
         try {

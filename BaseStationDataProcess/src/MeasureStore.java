@@ -11,7 +11,6 @@ public class MeasureStore {
     private String password;
     private Connection conn;
     private Statement stmt;
-    private DataSource dataSource;
 
     public MeasureStore(String dataBasePath, String url, String username, String password) {
         this.dataBasePath = dataBasePath;
@@ -20,7 +19,7 @@ public class MeasureStore {
         this.password = password;
     }
 
-    public void BuildConnection() throws SQLException {
+    public void buildConnection() throws SQLException {
         try{
             Class.forName(dataBasePath);
         } catch (ClassNotFoundException e) {

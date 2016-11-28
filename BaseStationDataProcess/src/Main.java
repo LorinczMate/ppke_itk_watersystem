@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -10,7 +9,7 @@ public class Main {
         MeasureStore insertToDB = new MeasureStore("org.postgresql.Driver",
                 "jdbc:postgresql://localhost:5432/postgres", "szama7", "szama7");
         try {
-            insertToDB.BuildConnection();
+            insertToDB.buildConnection();
         } catch (SQLException e) {
             e.printStackTrace();
             System.exit(1);
