@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------------
 
 
-#include "include.h"
+#include "M_include.h"
 #include "TI_CC_spi.h"
 
 
@@ -97,13 +97,13 @@ void TI_CC_SPISetup(void)
 void TI_CC_SPIWriteReg(char addr, char value)
 {
     TI_CC_CSn_PxOUT &= ~TI_CC_CSn_PIN;      // /CS enable
-    while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI);// Wait for CCxxxx ready
+    while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI) __nop();// Wait for CCxxxx ready
     IFG2 &= ~UCB0RXIFG;                     // Clear flag
     UCB0TXBUF = addr;                       // Send address
-    while (!(IFG2&UCB0RXIFG));              // Wait for TX to finish
+    while (!(IFG2&UCB0RXIFG)) __nop();              // Wait for TX to finish
     IFG2 &= ~UCB0RXIFG;                     // Clear flag
     UCB0TXBUF = value;                      // Send data
-    while (!(IFG2&UCB0RXIFG));              // Wait for TX to finish
+    while (!(IFG2&UCB0RXIFG)) __nop();              // Wait for TX to finish
     TI_CC_CSn_PxOUT |= TI_CC_CSn_PIN;       // /CS disable
 }
 
@@ -112,15 +112,15 @@ void TI_CC_SPIWriteBurstReg(char addr, char *buffer, char count)
     unsigned int i;
 
     TI_CC_CSn_PxOUT &= ~TI_CC_CSn_PIN;      // /CS enable
-    while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI);// Wait for CCxxxx ready
+    while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI) __nop();// Wait for CCxxxx ready
     IFG2 &= ~UCB0RXIFG;
     UCB0TXBUF = addr | TI_CCxxx0_WRITE_BURST;// Send address
-    while (!(IFG2&UCB0RXIFG));              // Wait for TX to finish
+    while (!(IFG2&UCB0RXIFG)) __nop();              // Wait for TX to finish
     for (i = 0; i < count; i++)
     {
       IFG2 &= ~UCB0RXIFG;
       UCB0TXBUF = buffer[i];                // Send data
-      while (!(IFG2&UCB0RXIFG));            // Wait for TX to finish
+      while (!(IFG2&UCB0RXIFG)) __nop();            // Wait for TX to finish
     }
     //while (!(IFG2&UCB0RXIFG));
     TI_CC_CSn_PxOUT |= TI_CC_CSn_PIN;       // /CS disable
@@ -131,15 +131,15 @@ char TI_CC_SPIReadReg(char addr)
   char x;
 
   TI_CC_CSn_PxOUT &= ~TI_CC_CSn_PIN;        // /CS enable
-  while (!(IFG2&UCB0TXIFG));                // Wait for TX to finish
+  while (!(IFG2&UCB0TXIFG)) __nop();                // Wait for TX to finish
   UCB0TXBUF = (addr | TI_CCxxx0_READ_SINGLE);// Send address
-  while (!(IFG2&UCB0TXIFG));                // Wait for TX to finish
+  while (!(IFG2&UCB0TXIFG)) __nop();                // Wait for TX to finish
   UCB0TXBUF = 0;                            // Dummy write so we can read data
   // Address is now being TX'ed, with dummy byte waiting in TXBUF...
-  while (!(IFG2&UCB0RXIFG));                // Wait for RX to finish
+  while (!(IFG2&UCB0RXIFG)) __nop();                // Wait for RX to finish
   // Dummy byte RX'ed during addr TX now in RXBUF
   IFG2 &= ~UCB0RXIFG;                       // Clear flag set during addr write
-  while (!(IFG2&UCB0RXIFG));                // Wait for end of dummy byte TX
+  while (!(IFG2&UCB0RXIFG)) __nop();                // Wait for end of dummy byte TX
   // Data byte RX'ed during dummy byte write is now in RXBUF
   x = UCB0RXBUF;                            // Read data
   TI_CC_CSn_PxOUT |= TI_CC_CSn_PIN;         // /CS disable
@@ -152,21 +152,21 @@ void TI_CC_SPIReadBurstReg(char addr, char *buffer, char count)
   char i;
 
   TI_CC_CSn_PxOUT &= ~TI_CC_CSn_PIN;        // /CS enable
-  while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI);// Wait for CCxxxx ready
+  while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI) __nop();// Wait for CCxxxx ready
   IFG2 &= ~UCB0RXIFG;                       // Clear flag
   UCB0TXBUF = (addr | TI_CCxxx0_READ_BURST);// Send address
-  while (!(IFG2&UCB0TXIFG));                // Wait for TXBUF ready
+  while (!(IFG2&UCB0TXIFG)) __nop();                // Wait for TXBUF ready
   UCB0TXBUF = 0;                            // Dummy write to read 1st data byte
   // Addr byte is now being TX'ed, with dummy byte to follow immediately after
-  while (!(IFG2&UCB0RXIFG));                // Wait for end of addr byte TX
+  while (!(IFG2&UCB0RXIFG)) __nop();                // Wait for end of addr byte TX
   IFG2 &= ~UCB0RXIFG;                       // Clear flag
-  while (!(IFG2&UCB0RXIFG));                // Wait for end of 1st data byte TX
+  while (!(IFG2&UCB0RXIFG)) __nop();                // Wait for end of 1st data byte TX
   // First data byte now in RXBUF
   for (i = 0; i < (count-1); i++)
   {
     UCB0TXBUF = 0;                          //Initiate next data RX, meanwhile..
     buffer[i] = UCB0RXBUF;                  // Store data from last data RX
-    while (!(IFG2&UCB0RXIFG));              // Wait for RX to finish
+    while (!(IFG2&UCB0RXIFG)) __nop();              // Wait for RX to finish
   }
   buffer[count-1] = UCB0RXBUF;              // Store last RX byte in buffer
   TI_CC_CSn_PxOUT |= TI_CC_CSn_PIN;         // /CS disable
@@ -177,13 +177,13 @@ char TI_CC_SPIReadStatus(char addr)
   char x;
 
   TI_CC_CSn_PxOUT &= ~TI_CC_CSn_PIN;        // /CS enable
-  while (TI_CC_SPI_USCIB0_PxIN & TI_CC_SPI_USCIB0_SOMI);// Wait for CCxxxx ready
+  while (TI_CC_SPI_USCIB0_PxIN & TI_CC_SPI_USCIB0_SOMI) __nop();// Wait for CCxxxx ready
   IFG2 &= ~UCB0RXIFG;                       // Clear flag set during last write
   UCB0TXBUF = (addr | TI_CCxxx0_READ_BURST);// Send address
-  while (!(IFG2&UCB0RXIFG));                // Wait for TX to finish
+  while (!(IFG2&UCB0RXIFG)) __nop();                // Wait for TX to finish
   IFG2 &= ~UCB0RXIFG;                       // Clear flag set during last write
   UCB0TXBUF = 0;                            // Dummy write so we can read data
-  while (!(IFG2&UCB0RXIFG));                // Wait for RX to finish
+  while (!(IFG2&UCB0RXIFG)) __nop();                // Wait for RX to finish
   x = UCB0RXBUF;                            // Read data
   TI_CC_CSn_PxOUT |= TI_CC_CSn_PIN;         // /CS disable
 
@@ -194,10 +194,10 @@ void TI_CC_SPIStrobe(char strobe)
 {
   IFG2 &= ~UCB0RXIFG;                       // Clear flag
   TI_CC_CSn_PxOUT &= ~TI_CC_CSn_PIN;        // /CS enable
-  while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI);// Wait for CCxxxx ready
+  while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI) __nop();// Wait for CCxxxx ready
   UCB0TXBUF = strobe;                       // Send strobe
   // Strobe addr is now being TX'ed
-  while (!(IFG2&UCB0RXIFG));                // Wait for end of addr TX
+  while (!(IFG2&UCB0RXIFG)) __nop();                // Wait for end of addr TX
   TI_CC_CSn_PxOUT |= TI_CC_CSn_PIN;         // /CS disable
 }
 
@@ -211,12 +211,12 @@ void TI_CC_PowerupResetCCxxxx(void)
   TI_CC_Wait(45);
 
   TI_CC_CSn_PxOUT &= ~TI_CC_CSn_PIN;        // /CS enable
-  while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI);// Wait for CCxxxx ready
+  while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI) __nop();// Wait for CCxxxx ready
   UCB0TXBUF = TI_CCxxx0_SRES;               // Send strobe
   // Strobe addr is now being TX'ed
   IFG2 &= ~UCB0RXIFG;                       // Clear flag
-  while (!(IFG2&UCB0RXIFG));                // Wait for end of addr TX
-  while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI);
+  while (!(IFG2&UCB0RXIFG)) __nop();                // Wait for end of addr TX
+  while (TI_CC_SPI_USCIB0_PxIN&TI_CC_SPI_USCIB0_SOMI) __nop();
   TI_CC_CSn_PxOUT |= TI_CC_CSn_PIN;         // /CS disable
 }
 

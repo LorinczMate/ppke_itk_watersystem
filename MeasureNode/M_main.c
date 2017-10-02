@@ -25,7 +25,6 @@ void ConfigureAdc(void);
 
 // bit masks for P1 on the RF2500 target board
 
-
 extern char paTable[];		// power table for C2500
 extern char paTableLen;
 
@@ -33,7 +32,7 @@ char txBuffer[20];  // Ez a küldött csomagok tárolására szolgáló buffer
 char rxBuffer[20];  // Ez a fogadott csomagok tárolására szolgáló buffer
 unsigned int i;
 
-unsigned char myAddress = 4;
+unsigned char myAddress = 3;
 
 int main(void) {
 	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
@@ -61,9 +60,9 @@ int main(void) {
 
 	P1REN |= SW1_MASK; //  enable pullups on SW1
 	P1OUT |= SW1_MASK;
-	//P1IES = SW1_MASK; //Int on falling edge
-	//P1IFG &= ~(SW1_MASK);//Clr flag for interrupt
-	//P1IE = SW1_MASK;//enable input interrupt
+	P1IES = SW1_MASK; //Int on falling edge
+	P1IFG &= ~(SW1_MASK); //Clr flag for interrupt
+	P1IE = SW1_MASK; //enable input interrupt
 
 	// Configure LED outputs on port 1
 	P1DIR = LED1_MASK + LED2_MASK; //Outputs
@@ -85,53 +84,28 @@ int main(void) {
 											  // When a pkt is received, it will
 											  // signal on GDO0 and wake CPU
 	DOUBLE_LINE_BREAK;
-	sendString("**************************************************************************************************");
+	sendString(
+			"**************************************************************************************************");
 	LINE_BREAK;
-	sendString("                                      MEASURENODE                                                 ");
+	sendString(
+			"                                      MEASURENODE                                                 ");
 	LINE_BREAK;
-	sendString("**************************************************************************************************");
+	sendString(
+			"**************************************************************************************************");
 	DOUBLE_LINE_BREAK;
 	sendString("Jelenleg egy MeasureNode van sorosportra csatakoztatva.");
 	LINE_BREAK;
-	sendString("A meresi adat kuldesehez, kerlek nyomd meg a gombot a controlleren!");
+	sendString(
+			"A meresi adat kuldesehez, kerlek nyomd meg a gombot a controlleren!");
 	LINE_BREAK;
 
 	__bis_SR_register(GIE);                   // Enter LPM3, enable interrupts
 
 	initLayer(myAddress);
-	char parentNode;
-	char distance;
-	char source = myAddress;
-	char ADC_Temp[5];
-	char txbuffertmp[20];
 
 	TURN_OFF_BOTH_LED;
+	while(1){
 
-	TURN_ON_BOTH_LED;
-	while (1) {
-		int networkBuildPacketCounter = 3;
-		if (BUTTON_PRESSED) {
-			TURN_OFF_BOTH_LED;
-			parentNode = getParentNode();
-			distance = getDistance();
-			if (parentNode != 0) {
-				if (networkBuildPacketCounter > 0) {
-					__delay_cycles(1000);		// Wait for ADC Ref to settle
-					ADC10CTL0 |= ENC + ADC10SC;	// Sampling and conversion start
-					__bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
-					ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
-					itoa(ADC_value, ADC_Temp, 10);
-					sendMyMeasurementDLPacket(0, parentNode, source, distance, ADC_Temp,
-							0, txBuffer);
-					TURN_ON_GREEN_LED;
-				}
-			}
-			__delay_cycles(2000);
-			TURN_OFF_BOTH_LED;
-			while (BUTTON_PRESSED)
-				;
-		} else {
-		}
 	}
 }
 
@@ -148,17 +122,31 @@ void ConfigureAdc(void) {
 	ADC10AE0 |= BIT1;                         // ADC input enable P2.1
 }
 
-/*
- // ADC10 interrupt service routine
- __attribute__((interrupt(ADC10_VECTOR)))
- void ADC10_ISR(void)
- {
- P1OUT |= 2;
- if (ADC10MEM < 0x155)                     // ADC10MEM = A0 > 0.5V?
- P1OUT &= ~0x01;                         // Clear P1.0 LED off
- else
- P1OUT |= 0x01;                          // Set P1.0 LED on
- __bic_SR_register_on_exit(CPUOFF);
- }
- */
+// Port 1 interrupt service routine
+#pragma vector=PORT1_VECTOR
+__interrupt void Port_1(void) {
+	char parentNode;
+	char distance;
+	char source = myAddress;
+	char ADC_Temp[5];
+	char txbuffertmp[20];
+	char counter = 1;
+	if (P1IFG & BIT2) { // A minket érdeklő interrupt jött be? (Más most úgysincs...)
+		TURN_ON_RED_LED;
+		parentNode = getParentNode();
+		distance = getDistance();
+		if (parentNode != 0) {
+			__delay_cycles(1000);		// Wait for ADC Ref to settle
+			ADC10CTL0 |= ENC + ADC10SC;	// Sampling and conversion start
+			__bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
+			ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
+			itoa(ADC_value, ADC_Temp, 10);
+			__delay_cycles(300000);
+			sendMyMeasurementDLPacket(0, parentNode, source, distance, ADC_Temp,
+					0, txBuffer);
+		}
+		P1OUT ^= BIT1;
+		P1IFG &= ~BIT2;
+	}
+}
 

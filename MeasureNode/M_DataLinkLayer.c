@@ -39,7 +39,7 @@ void receiveDLPacket(char length, char *payload, char rssi){
 		  from = myAddress;
 		  distance = myDistance;
 		  sendNetworkBuildDLPacket(NETWORKBUILDDATATYPE, distance, from, payload);
-		  TURN_ON_BOTH_LED;
+		  TURN_ON_GREEN_LED;
       } else if ((messageType == MEASUREMENTDATATYPE) && (to == myAddress)) {
 			parentnode = payload[4];
 			source = payload[5];
@@ -47,7 +47,8 @@ void receiveDLPacket(char length, char *payload, char rssi){
 			to = parentnode;
 			receiveMeasurementDLPacket(length, payload);
 			//így ebben a legutolsó RSSI még nem kerül bele!
-			arrayShiftRight(length-6, payload+6, rssi);
+			//arrayShiftRight(length-6, payload+6, rssi);
+			//rssi length hosszának növelése kellene!
 			length++;
 			sendMeasurementDLPacket(MEASUREMENTDATATYPE, to, from, length-6, payload+6);
       }
@@ -70,8 +71,8 @@ void sendNetworkBuildDLPacket(char messageType, char distance, char from, char *
 }
 
 void sendMeasurementDLPacket(char messageType, char to, char from, char payloadLength, char *payload){
-	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
-	memcpy(rssi, payload, rssilength);
+	/*for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
+	memcpy(rssi, payload, rssilength);*/
 	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurement);}
    	memcpy(measurement, payload, measurementlength);
 	arrayShiftRight(payloadLength++, payload, source);
@@ -95,8 +96,8 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, c
 	to|from|messagetype|distance|parentnode|source|measurementData|rssi
 	----------------------------*/
 
-	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
-	memcpy(payload, rssi, rssilength);
+	/*for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
+	memcpy(payload, rssi, rssilength);*/
 	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurementData);}
    	memcpy(payload, measurementData, measurementlength);
 	arrayShiftRight(payloadLength++, payload, myAddress);

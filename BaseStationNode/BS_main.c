@@ -88,7 +88,9 @@ int main(void) {
 			TURN_OFF_BOTH_LED;
 			networkBuilderPacketCounter++;
 			txBuffer[0] = 0;
+			sendString("Running");
 			sendNetworkBuildDLPacket(1, 0, myAddress, txBuffer);
+			sendString("Still running");
 			TURN_ON_GREEN_LED;
 			itoa(networkBuilderPacketCounter, networkBuilderPacketCounterString, 10);
 #ifdef VERBOSE

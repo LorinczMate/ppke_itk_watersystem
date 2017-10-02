@@ -1,4 +1,4 @@
-//#define VERBOSE
+#define VERBOSE
 #include "BS_PhysicLayer.h"
 #include "BS_include.h"
 #include "BS_DataLinkLayer.h"
@@ -27,6 +27,7 @@ void receivePPacket(char length, char *payload, char rssi){
    // Lehetne ide CRC kód ellenőrzést tenni, de most ezt hagyjuk
    // Egyszerűen csak továbbítjuk a felső rétegnek
 	LINE_BREAK;
+	P1OUT ^= 0x03;
    receiveDLPacket(length, payload, rssi);
 }
 

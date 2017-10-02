@@ -62,7 +62,7 @@ void sendNetworkBuildDLPacket(char messageType, char distance, char myAddress, c
    arrayShiftRight(payloadLength++, buffer, distance);
    arrayShiftRight(payloadLength++, buffer, messageType);
    arrayShiftRight(payloadLength++, buffer, myAddress);
-   arrayShiftRight(payloadLength++, buffer, BROADCASTPACKET);
+   arrayShiftRight(payloadLength++, buffer, BROADCASTPACKET); //broadcastpacket
 #ifdef VERBOSE
    sendNetworkPacketToSerialPort(buffer);
 #endif
