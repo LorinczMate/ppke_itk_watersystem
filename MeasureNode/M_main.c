@@ -60,9 +60,9 @@ int main(void) {
 
 	P1REN |= SW1_MASK; //  enable pullups on SW1
 	P1OUT |= SW1_MASK;
-	P1IES = SW1_MASK; //Int on falling edge
-	P1IFG &= ~(SW1_MASK); //Clr flag for interrupt
-	P1IE = SW1_MASK; //enable input interrupt
+	//P1IES = SW1_MASK; //Int on falling edge
+	//P1IFG &= ~(SW1_MASK); //Clr flag for interrupt
+	//P1IE = SW1_MASK; //enable input interrupt
 
 	// Configure LED outputs on port 1
 	P1DIR = LED1_MASK + LED2_MASK; //Outputs
@@ -102,10 +102,30 @@ int main(void) {
 	__bis_SR_register(GIE);                   // Enter LPM3, enable interrupts
 
 	initLayer(myAddress);
+	char parentNode;
+	char distance;
+	char source = myAddress;
+	char ADC_Temp[5];
+	char txbuffertmp[20];
 
-	TURN_OFF_BOTH_LED;
-	while(1){
+	TURN_ON_BOTH_LED;
 
+	while (1) {
+		if (BUTTON_PRESSED) {
+			parentNode = getParentNode();
+			distance = getDistance();
+			if (parentNode != 0) {
+				__delay_cycles(1000);		// Wait for ADC Ref to settle
+				ADC10CTL0 |= ENC + ADC10SC;	// Sampling and conversion start
+				__bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
+				ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
+				itoa(ADC_value, ADC_Temp, 10);
+				sendMyMeasurementDLPacket(0, parentNode, source, distance,
+						ADC_Temp, 0, txBuffer);
+				P1OUT ^= BIT1;
+			}
+			__delay_cycles(2000);
+		}
 	}
 }
 
@@ -121,32 +141,39 @@ void ConfigureAdc(void) {
 	ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON + ADC10IE; // Vcc & Vss as reference, Sample and hold for 64 Clock cycles, ADC on, ADC interrupt enable
 	ADC10AE0 |= BIT1;                         // ADC input enable P2.1
 }
-
-// Port 1 interrupt service routine
-#pragma vector=PORT1_VECTOR
-__interrupt void Port_1(void) {
-	char parentNode;
-	char distance;
-	char source = myAddress;
-	char ADC_Temp[5];
-	char txbuffertmp[20];
-	char counter = 1;
-	if (P1IFG & BIT2) { // A minket érdeklő interrupt jött be? (Más most úgysincs...)
-		TURN_ON_RED_LED;
-		parentNode = getParentNode();
-		distance = getDistance();
-		if (parentNode != 0) {
-			__delay_cycles(1000);		// Wait for ADC Ref to settle
-			ADC10CTL0 |= ENC + ADC10SC;	// Sampling and conversion start
-			__bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
-			ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
-			itoa(ADC_value, ADC_Temp, 10);
-			__delay_cycles(300000);
-			sendMyMeasurementDLPacket(0, parentNode, source, distance, ADC_Temp,
-					0, txBuffer);
-		}
-		P1OUT ^= BIT1;
-		P1IFG &= ~BIT2;
-	}
-}
-
+/*
+ // Port 1 interrupt service routine
+ #pragma vector=PORT1_VECTOR
+ __interrupt void Port_1(void) {
+ sendString("interrupt handler is working");
+ LINE_BREAK;
+ char parentNode;
+ char distance;
+ char source = myAddress;
+ char ADC_Temp[5];
+ char txbuffertmp[20];
+ if (P1IFG & BIT2) { // A minket érdeklő interrupt jött be? (Más most úgysincs...)
+ if (BUTTON_PRESSED) {
+ TURN_ON_RED_LED;
+ sendString("button pressed");
+ LINE_BREAK;
+ parentNode = getParentNode();
+ distance = getDistance();
+ if (parentNode != 0) {
+ __delay_cycles(1000);		// Wait for ADC Ref to settle
+ ADC10CTL0 |= ENC + ADC10SC;	// Sampling and conversion start
+ __bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
+ ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
+ itoa(ADC_value, ADC_Temp, 10);
+ __delay_cycles(300000);
+ sendMyMeasurementDLPacket(0, parentNode, source, distance,
+ ADC_Temp, 0, txBuffer);
+ sendString("Measure packet sent!");
+ LINE_BREAK;
+ }
+ }
+ P1OUT ^= BIT1;
+ P1IFG &= ~BIT2;
+ }
+ }
+ */

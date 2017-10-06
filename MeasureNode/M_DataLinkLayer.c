@@ -71,8 +71,8 @@ void sendNetworkBuildDLPacket(char messageType, char distance, char from, char *
 }
 
 void sendMeasurementDLPacket(char messageType, char to, char from, char payloadLength, char *payload){
-	/*for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
-	memcpy(rssi, payload, rssilength);*/
+	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
+	memcpy(rssi, payload, rssilength);
 	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurement);}
    	memcpy(measurement, payload, measurementlength);
 	arrayShiftRight(payloadLength++, payload, source);
@@ -96,8 +96,8 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, c
 	to|from|messagetype|distance|parentnode|source|measurementData|rssi
 	----------------------------*/
 
-	/*for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
-	memcpy(payload, rssi, rssilength);*/
+	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
+	memcpy(payload, rssi, rssilength);
 	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurementData);}
    	memcpy(payload, measurementData, measurementlength);
 	arrayShiftRight(payloadLength++, payload, myAddress);
