@@ -1,3 +1,3 @@
-# ppke_itk_watersystem
+# Pazmany Peter Catholic University - Soil Measurement Wireless Sensor Network System
 
-valtoztatas
+I planned and implemented a communication protocoll for my soil measurement WSN system into MSP430f2274 microcontrollers in C. These microcontrollers are in an Amber wireless module (AMB8423). In the communication protocoll there are two different modul - the BaseStation which task is to build the network as a first step and to receive the measured datas from the other nodes later. The other moduls are the MeasureNode-s which task is to help to the BaseStation to build the network in the begining and forward the network build messages to those nodes which can't see the BaseStation directly - cause one of the main pont that none of the MeasureNodes has fix location in the network. The other task of them is the measure the soil humidity and to send this measurement packet to the BaseStation - if a node can't see the BS directly than into its parent and it will propagate the message in the same way.The Java Data Process will make a preprocess on the raw measurement data and save the data into my database.
