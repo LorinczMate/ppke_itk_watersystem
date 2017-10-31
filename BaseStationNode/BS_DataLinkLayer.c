@@ -8,7 +8,7 @@
 
 char myAddress;
 char myDistance;
-char const NETWORKBUILDPACKET = 0;
+char const NETWORKBUILDDATATYPE = 1;
 char const MEASUREMENTDATATYPE = 0;
 char const BROADCASTPACKET = 0;
 char to;
@@ -48,21 +48,21 @@ void receiveDLPacket(char length, char *payload, char rssi){
    if (to == myAddress){
       payload[length]=0;
       if(messageType == MEASUREMENTDATATYPE){
-    	  receiveMeasurementDLPacket(length, payload, rssi);
+    	  receiveMeasurementDLLPacketToSerialPort(length, payload, rssi);
       }
    }
 }
 
-void sendNetworkBuildDLPacket(char messageType, char distance, char myAddress, char *buffer){
+void sendNetworkBuildDLLPacket(char messageType, char distance, char myAddress, char *buffer){
 	/*
 	A CSOMAG FELÉPÍTÉSE:
-	BROADCASTPACKET|myAddress|messageType|distance|parentnode|source
+	BROADCASTPACKET|myAddress|messageType|distance
 	*/
    int payloadLength = 0;
    arrayShiftRight(payloadLength++, buffer, distance);
    arrayShiftRight(payloadLength++, buffer, messageType);
    arrayShiftRight(payloadLength++, buffer, myAddress);
-   arrayShiftRight(payloadLength++, buffer, BROADCASTPACKET); //broadcastpacket
+   arrayShiftRight(payloadLength++, buffer, 2); //broadcastpacket
 #ifdef VERBOSE
    sendNetworkPacketToSerialPort(buffer);
 #endif
@@ -93,7 +93,7 @@ void sendNetworkPacketToSerialPort(char *buffer){
    sendString("My Address: ");
    sendChar(buffer[1]+'0');
    LINE_BREAK;
-   sendString("Message Type (1 - NETWORKBUILDPACKET; 2 - MEASUREMENTPACKET): ");
+   sendString("Message Type (1 - NETWORKBUILDPACKET; 0 - MEASUREMENTPACKET): ");
    sendChar(buffer[2]+'0');
    LINE_BREAK;
    sendString("Distance: ");
@@ -104,7 +104,7 @@ void sendNetworkPacketToSerialPort(char *buffer){
 }
 
 
-void receiveMeasurementDLPacket(char length, char *buffer, unsigned char rssi){
+void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer, unsigned char rssi){
 	memcpy(measurementData, buffer+6, 5); // szerintem 10 byte nem csak 5
 	// memcpy(rssi, buffer+6+measurementDataLength, rssilength);
 	char rssiToSerial[5];

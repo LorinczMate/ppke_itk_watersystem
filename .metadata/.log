@@ -1,0 +1,788 @@
+!SESSION 2016-11-11 14:37:37.797 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_91
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -data /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-11-11 14:50:04.475
+!MESSAGE Indexed 'BaseStationNode' (7 sources, 23 headers) in 3,40 sec: 571 declarations; 1 233 references; 0 unresolved inclusions; 1 syntax errors; 0 unresolved names (0,00%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-11-11 14:50:12.473
+!MESSAGE Indexed 'MeasureNode' (7 sources, 22 headers) in 0,97 sec: 502 declarations; 1 518 references; 0 unresolved inclusions; 1 syntax errors; 0 unresolved names (0,00%)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-11 15:00:06.330
+!MESSAGE fet: close command failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+rf2500: can't receive data: Resource temporarily unavailable
+fet: failed to write to 0x8e38
+rf2500: can't receive data: Resource temporarily unavailable
+fet: final reset failed
+rf2500: can't receive data: Device or resource busy
+fet: close command failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-11 15:00:56.864
+!MESSAGE fet: close command failed
+!STACK 0
+java.lang.Throwable: fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+rf2500: can't receive data: Resource temporarily unavailable
+warning: device does not support power profiling
+rf2500: can't receive data: Resource temporarily unavailable
+fet: failed to read from 0x0ff0
+device_probe_id: read failed
+warning: device ID probe failed
+rf2500: can't receive data: Resource temporarily unavailable
+fet: failed to halt CPU
+rf2500: can't receive data: Resource temporarily unavailable
+fet: final reset failed
+rf2500: can't receive data: Resource temporarily unavailable
+fet: close command failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-11 15:47:44.473
+!MESSAGE fet: close command failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+rf2500: can't receive data: Resource temporarily unavailable
+fet: failed to write to 0x980e
+rf2500: can't receive data: Resource temporarily unavailable
+fet: final reset failed
+rf2500: can't receive data: Resource temporarily unavailable
+fet: close command failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2016-11-16 15:13:40.826 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_91
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-18 13:51:13.292
+!MESSAGE fet: close command failed
+!STACK 0
+java.lang.Throwable: fet: FET returned NAK
+warning: device does not support power profiling
+rf2500: can't send data: Device or resource busy
+fet: failed to write to 0x8500
+rf2500: can't send data: Device or resource busy
+fet: final reset failed
+rf2500: can't send data: Device or resource busy
+fet: close command failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-18 14:40:05.708
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-18 14:40:16.685
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-18 14:41:00.140
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2016-11-21 20:34:35.141 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-21 20:54:11.031
+!MESSAGE fet: failed to write to 0x8340
+!STACK 0
+java.lang.Throwable: fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+fet: FET returned NAK
+warning: device does not support power profiling
+fet: FET returned error code 7 (Could not write device memory)
+fet: failed to write to 0x8340
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-21 20:56:16.476
+!MESSAGE fet: identify failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+rf2500: can't receive data: Resource temporarily unavailable
+warning: fet: reset failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-21 20:56:43.436
+!MESSAGE fet: identify failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+rf2500: can't receive data: Resource temporarily unavailable
+warning: fet: reset failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-21 20:57:20.530
+!MESSAGE fet: identify failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+rf2500: can't receive data: Resource temporarily unavailable
+warning: fet: reset failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2016-11-27 15:37:41.967 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-11-27 15:39:42.034
+!MESSAGE Indexed 'SerialPortExample' (2 sources, 6 headers) in 1,18 sec: 251 declarations; 649 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0,00%)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-27 15:45:39.204
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-27 15:45:48.604
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-27 15:56:24.216
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-27 20:25:50.453
+!MESSAGE fet: identify failed
+!STACK 0
+java.lang.Throwable: fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+rf2500: can't receive data: Resource temporarily unavailable
+warning: fet: reset failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-27 20:26:02.004
+!MESSAGE fet: identify failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: missing info
+fet: identify failed
+fet: reply type mismatch
+warning: fet: reset failed
+fet: reply type mismatch
+fet: command C_IDENT1 failed
+fet: reply type mismatch
+fet: command C_IDENT1 failed
+fet: identify failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-11-27 20:38:07.536
+!MESSAGE fet: close command failed
+!STACK 0
+java.lang.Throwable: fet: FET returned NAK
+warning: device does not support power profiling
+rf2500: can't send data: No such device
+fet: failed to write to 0x87c0
+rf2500: can't send data: No such device
+fet: final reset failed
+rf2500: can't send data: No such device
+fet: close command failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2016-12-03 12:46:38.110 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2016-12-03 12:46:46.868
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-12-03 12:50:21.143
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/MeasureNode/Release/MeasureNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/MeasureNode/Release/MeasureNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-12-03 12:50:29.301
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/MeasureNode/Release/MeasureNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/MeasureNode/Release/MeasureNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-12-03 12:51:00.217
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/MeasureNode/Release/MeasureNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/MeasureNode/Release/MeasureNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-12-03 12:52:42.647
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2016-12-17 13:13:26.409 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2016-12-17 13:13:35.875
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2016-12-17 12:32:42.614 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -data /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-12-17 12:39:31.865
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2016-12-18 13:58:57.435 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-12-18 14:31:01.398
+!MESSAGE fet: open failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+rf2500: can't receive data: No such device
+fet: open failed
+rf2500: can't send data: No such device
+fet: open failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2016-12-18 14:31:36.906
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2017-09-11 11:04:13.915 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-09-11 11:04:23.848
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-09-11 11:16:01.428
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2017-09-25 09:07:33.954 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-09-25 10:16:16.316
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-09-25 10:16:34.493
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2017-09-29 14:27:08.260 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-09-29 14:27:17.452
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-09-29 16:40:52.213
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/FOT/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2017-10-02 15:23:29.640 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -data /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 15:28:43.850
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 15:39:56.366
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 15:44:00.090
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 15:51:30.927
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 16:34:34.512
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 16:36:11.823
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/SerialPortExample/Release/SerialPortExample.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 16:59:22.743
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 16:59:31.926
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 16:59:44.141
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-02 16:59:58.770
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2017-10-04 17:25:52.629 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-04 17:45:46.337
+!MESSAGE fet: close command failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+rf2500: can't send data: Device or resource busy
+fet: failed to write to 0x8380
+rf2500: can't send data: Device or resource busy
+fet: final reset failed
+rf2500: can't send data: Device or resource busy
+fet: close command failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2017-10-29 13:02:08.357 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-29 14:30:32.024
+!MESSAGE fet: open failed
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+rf2500: can't receive data: No such device
+fet: open failed
+rf2500: can't send data: No such device
+fet: open failed
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-29 14:30:46.407
+!MESSAGE usbutil: unable to find a device matching 0451:f432
+!STACK 0
+java.lang.Throwable: usbutil: unable to find a device matching 0451:f432
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2017-10-30 21:09:12.478 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-30 22:20:30.700
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2017-10-30 22:22:08.025 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=hu_HU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-30 22:23:03.967
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-30 22:25:50.646
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY dk.xpg.msp430eclipse 4 0 2017-10-30 22:27:48.591
+!MESSAGE prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+!STACK 0
+java.lang.Throwable: rf2500: warning: can't detach kernel driver: No data available
+fet: FET returned error code 4 (Could not find device or device not supported)
+fet: command C_IDENT1 failed
+fet: FET returned NAK
+warning: device does not support power profiling
+prog: /home/marci/Dokumentumok/PPKE/Szakdolgozat/ppke_itk_watersystem/BaseStationNode/Release/BaseStationNode.elf: No such file or directory
+
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugErrorParser.getError(MSPDebugErrorParser.java:34)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugProcess.run(MSPDebugProcess.java:148)
+	at dk.xpg.msp430eclipse.tools.mspdebug.MSPDebugJob.run(MSPDebugJob.java:44)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
