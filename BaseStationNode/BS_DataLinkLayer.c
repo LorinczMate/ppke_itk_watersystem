@@ -132,6 +132,10 @@ void receiveWhateverMessageInTheAirDLLPacetToSerialPort(char length, char *buffe
 	sendChar(buffer[5]+'0');
 	DOUBLE_LINE_BREAK;
 
+	sendString("Length: ");
+	sendChar(length + '0');
+	DOUBLE_LINE_BREAK;
+
 	sendString("To: ");
 	sendChar(buffer[0]+'0');
 	sendString(" | ");
@@ -150,7 +154,7 @@ void receiveWhateverMessageInTheAirDLLPacetToSerialPort(char length, char *buffe
 	sendString("Source: ");
 	sendChar(buffer[5]+'0');
 	sendString(" | ");
-	LINE_BREAK;
+	DOUBLE_LINE_BREAK;
 	sendString("                                       END OF THE WHATEVER MESSAGE                                ");
 	LINE_BREAK;
 	sendString("--------------------------------------------------------------------------------------------------");
@@ -179,6 +183,7 @@ void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer, unsigned
 	sendString(measurementData);
 	sendString(rssiToSerial);
 	DOUBLE_LINE_BREAK;
+
 
 	sendString("To: ");
 	sendChar(buffer[0]+'0');
