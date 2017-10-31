@@ -32,7 +32,7 @@ char txBuffer[20];  // Ez a küldött csomagok tárolására szolgáló buffer
 char rxBuffer[20];  // Ez a fogadott csomagok tárolására szolgáló buffer
 unsigned int i;
 
-unsigned char myAddress = 3;
+unsigned char myAddress = 2;
 
 int main(void) {
 	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
@@ -89,6 +89,10 @@ int main(void) {
 	LINE_BREAK;
 	sendString(
 			"                                      MEASURENODE                                                 ");
+	LINE_BREAK;
+	sendString(
+			"                                      ADDRESS: ");
+	sendChar(myAddress + '0');
 	LINE_BREAK;
 	sendString(
 			"**************************************************************************************************");

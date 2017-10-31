@@ -96,7 +96,7 @@ void receiveNetworkBuildPPacketFromSerialPort(char length, char *buffer){
 void receiveMeasurementPPacketFromSerialPort(char length, char *buffer){
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;
-	sendString("DataLinkLayer Measurement uzenetet kapott!");
+	sendString("PhysicalLayer Measurement uzenetet kapott!");
 	LINE_BREAK;
 	sendString("A Csomag felépítése: ");
 	sendString("length|to|from|messagetype|distance|parentnode|source|measurementData|rssi");
@@ -129,7 +129,7 @@ void receiveMeasurementPPacketFromSerialPort(char length, char *buffer){
 	sendString("From: ");
 	sendChar(buffer[1]+'0');
 	LINE_BREAK;
-	sendString("Message Type (1 - NETWORKBUILDPACKET; 2 - MEASUREMENTPACKET): ");
+	sendString("Message Type (1 - NETWORKBUILDPACKET; 0 - MEASUREMENTPACKET): ");
 	sendChar(buffer[2]+'0');
 	LINE_BREAK;
 	sendString("Distance: ");

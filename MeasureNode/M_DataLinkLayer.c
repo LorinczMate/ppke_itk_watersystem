@@ -17,8 +17,8 @@ char parentnode;
 char source;
 char rssi[20];
 char measurement[10];
-char rssilength;
-char measurementlength = 10;
+char rssilength = 3;
+char measurementlength = 4;
 
 void initLayer(char _myAddress){
    myAddress = _myAddress;
@@ -33,51 +33,60 @@ void receiveDLPacket(char length, char *payload, char rssi){
    if (to == myAddress || to == BROADCASTPACKET){
      // payload[length]=0;
       if ((messageType == NETWORKBUILDDATATYPE) && (myDistance > (distance + 1)) ){
-    	  receiveNetworkBuildDLLPacketFromSerialPort(payload);
+    	  sendString("I gona change my parameters cause i got a better offer from: ");
+    	  sendChar(payload[1]+'0');
+    	  receiveNetworkBuildDLLPacketToSerialPort(payload);
+    	  LINE_BREAK;
+    	  sendString("My previous distance was: ");
+    	  sendChar(myDistance + '0');
     	  myDistance = distance + 1;
+    	  LINE_BREAK;
+    	  sendString("... and my new distance is: ");
+    	  sendChar(myDistance + '0');
     	  parentnode=from;
 		  from = myAddress;
 		  distance = myDistance;
-		  sendNetworkBuildDLPacket(NETWORKBUILDDATATYPE, distance, from, payload);
+		  sendNetworkBuildDLLPacket(NETWORKBUILDDATATYPE, myDistance, from, payload);
 		  TURN_ON_GREEN_LED;
       } else if ((messageType == MEASUREMENTDATATYPE) && (to == myAddress)) {
-			parentnode = payload[4];
 			source = payload[5];
 			from = myAddress;
 			to = parentnode;
-			receiveMeasurementDLPacket(length, payload);
+			receiveMeasurementDLLPacketToSerialPort(length, payload);
 			//így ebben a legutolsó RSSI még nem kerül bele!
 			//arrayShiftRight(length-6, payload+6, rssi);
 			//rssi length hosszának növelése kellene!
 			length++;
-			sendMeasurementDLPacket(MEASUREMENTDATATYPE, to, from, length-6, payload+6);
+
+			sendMeasurementDLLPacket(MEASUREMENTDATATYPE, to, from, length-6, payload+6); //source-t külön át kéne adni különben a globál sourcot küldi el és ha több eszköz csomópontja egy azonos node ott konfliktus lehet!
       }
    }
 }
 
 
-void sendNetworkBuildDLPacket(char messageType, char distance, char from, char *payload){ //címzett, üzenet hossza + az üzenet.
+void sendNetworkBuildDLLPacket(char messageType, char myDistance, char from, char *payload){ //címzett, üzenet hossza + az üzenet.
 	/*--------------------------
 	A CSOMAG FELÉPÍTÉSE:
 	BROADCASTPACKET|myAddress|messageType|distance|
 	*/
 	int payloadLength = 0;
-   arrayShiftRight(payloadLength++, payload, distance);
+   arrayShiftRight(payloadLength++, payload, myDistance);
    arrayShiftRight(payloadLength++, payload, messageType);
    arrayShiftRight(payloadLength++, payload, myAddress);
-   arrayShiftRight(payloadLength++, payload, BROADCASTPACKET);
+   arrayShiftRight(payloadLength++, payload, BROADCASTPACKET); //BROADCASTPACKET
    sendNetworkPacketToSerialPort(payload);
    sendPPacket(payloadLength, payload);
 }
 
-void sendMeasurementDLPacket(char messageType, char to, char from, char payloadLength, char *payload){
-	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
-	memcpy(rssi, payload, rssilength);
-	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurement);}
-   	memcpy(measurement, payload, measurementlength);
+void sendMeasurementDLLPacket(char messageType, char to, char from, char payloadLength, char *payload){
+	__delay_cycles(10000000);
+	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi[i]);} //rssi értékek forditva fognak bemásolódni
+	//memcpy(rssi, payload, rssilength); //(destination, source, length)
+	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurement[i]);} // szintén
+   	//memcpy(measurement, payload, measurementlength);
 	arrayShiftRight(payloadLength++, payload, source);
 	arrayShiftRight(payloadLength++, payload, parentnode);
-	arrayShiftRight(payloadLength++, payload, distance);
+	arrayShiftRight(payloadLength++, payload, myDistance);
 	arrayShiftRight(payloadLength++, payload, messageType);
 	arrayShiftRight(payloadLength++, payload, from);
 	arrayShiftRight(payloadLength++, payload, to);
@@ -96,13 +105,13 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, c
 	to|from|messagetype|distance|parentnode|source|measurementData|rssi
 	----------------------------*/
 
-	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi);}
-	memcpy(payload, rssi, rssilength);
-	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurementData);}
-   	memcpy(payload, measurementData, measurementlength);
+	for(int i=0; i<rssilength;i++){arrayShiftRight(payloadLength++, payload, rssi[i]);}
+	//memcpy(payload, rssi, rssilength);
+	for(int i=0; i<measurementlength;i++){arrayShiftRight(payloadLength++, payload, measurementData[i]);}
+   	//memcpy(payload, measurementData, measurementlength);
 	arrayShiftRight(payloadLength++, payload, myAddress);
 	arrayShiftRight(payloadLength++, payload, parentnode);
-	arrayShiftRight(payloadLength++, payload, distance);
+	arrayShiftRight(payloadLength++, payload, myDistance);
 	arrayShiftRight(payloadLength++, payload, messageType);
 	arrayShiftRight(payloadLength++, payload, myAddress);
 	arrayShiftRight(payloadLength++, payload, parentnode);
@@ -168,7 +177,7 @@ void sendMyMeasurementToSerialPort(char *buffer, char *measurementData, char *rs
 	sendString("From: ");
 	sendChar(buffer[1]+'0');
 	LINE_BREAK;
-	sendString("Message Type (1 - NETWORKBUILDPACKET; 2 - MEASUREMENTPACKET): ");
+	sendString("Message Type (1 - NETWORKBUILDPACKET; 0 - MEASUREMENTPACKET): ");
 	sendChar(buffer[2]+'0');
 	LINE_BREAK;
 	sendString("Distance: ");
@@ -192,7 +201,7 @@ void sendMyMeasurementToSerialPort(char *buffer, char *measurementData, char *rs
 
 }
 
-void receiveNetworkBuildDLLPacketFromSerialPort(char *buffer){
+void receiveNetworkBuildDLLPacketToSerialPort(char *buffer){
    sendString("--------------------------------------------------------------------------------------------------");
    LINE_BREAK;
    sendString("DataLinkLayer NetworkBuild uzenetet kapott!");
@@ -213,7 +222,7 @@ void receiveNetworkBuildDLLPacketFromSerialPort(char *buffer){
    sendString("My Address: ");
    sendChar(buffer[1]+'0');
    LINE_BREAK;
-   sendString("Message Type (1 - NETWORKBUILDPACKET; 2 - MEASUREMENTPACKET): ");
+   sendString("Message Type (1 - NETWORKBUILDPACKET; 0 - MEASUREMENTPACKET): ");
    sendChar(buffer[2]+'0');
    LINE_BREAK;
    sendString("Distance: ");
@@ -223,7 +232,7 @@ void receiveNetworkBuildDLLPacketFromSerialPort(char *buffer){
    LINE_BREAK;
 }
 
-void receiveMeasurementDLPacket(char length, char *buffer){
+void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer){
 	sendString("--------------------------------------------------------------------------------------------------");
 	LINE_BREAK;
 	sendString("DataLinkLayer Measurement uzenetet kapott!");
