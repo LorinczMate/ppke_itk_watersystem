@@ -62,9 +62,14 @@ int main(void) {
 	TI_CC_SPIStrobe(TI_CCxxx0_SRX);           // Initialize CCxxxx in RX mode.
 											  // When a pkt is received, it will
 											  // signal on GDO0 and wake CPU
+	__bis_SR_register(GIE);  // Enter LPM3, enable interrupts
 	TURN_OFF_BOTH_LED;
+	//villogjon annyit a zöld led ahányas a címe a node-nak, majd maradjon égve a zöld lámpa
+	for (i = 0; i < myAddress*2+1; i++) {
+		__delay_cycles(500000);
+		BLINK_GREEN_LED;
+	}
 
-	__bis_SR_register(GIE);                   // Enter LPM3, enable interrupts
 #ifdef VERBOSE
 	DOUBLE_LINE_BREAK;
 	sendString("**************************************************************************************************");
@@ -77,7 +82,6 @@ int main(void) {
 	LINE_BREAK;
 	sendString("A halozat epites elkezdesehez, kerlek nyomd meg a gombot a controlleren!");
 	LINE_BREAK;
-	TURN_ON_BOTH_LED;
 #endif
 	initLayer(myAddress);
 	char txbuffertmp[20];
@@ -85,12 +89,9 @@ int main(void) {
 	char networkBuilderPacketCounterString[5];
 	while (1) {
 		if (BUTTON_PRESSED) {
-			TURN_OFF_BOTH_LED;
 			networkBuilderPacketCounter++;
 			txBuffer[0] = 0;
-			sendString("Running");
 			sendNetworkBuildDLLPacket(1, 0, myAddress, txBuffer);
-			sendString("Still running");
 			TURN_ON_GREEN_LED;
 			itoa(networkBuilderPacketCounter, networkBuilderPacketCounterString, 10);
 #ifdef VERBOSE

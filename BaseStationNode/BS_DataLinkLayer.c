@@ -48,7 +48,12 @@ void receiveDLPacket(char length, char *payload, char rssi){
    if (to == myAddress){
       payload[length]=0;
       if(messageType == MEASUREMENTDATATYPE){
+	    	for (int i = 0; i < from*2+1; i++) {
+				__delay_cycles(500000);
+				BLINK_RED_LED;
+			}
     	  receiveMeasurementDLLPacketToSerialPort(length, payload, rssi);
+    	  TURN_OFF_RED_LED;
       }
    }
 }
@@ -63,10 +68,13 @@ void sendNetworkBuildDLLPacket(char messageType, char distance, char myAddress, 
    arrayShiftRight(payloadLength++, buffer, messageType);
    arrayShiftRight(payloadLength++, buffer, myAddress);
    arrayShiftRight(payloadLength++, buffer, 2); //broadcastpacket
+   TURN_ON_RED_LED;
 #ifdef VERBOSE
    sendNetworkPacketToSerialPort(buffer);
 #endif
    sendPPacket(payloadLength, buffer);
+   __delay_cycles(1000000);
+   TURN_OFF_RED_LED;
 }
 
 void sendNetworkPacketToSerialPort(char *buffer){

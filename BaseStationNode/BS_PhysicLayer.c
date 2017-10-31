@@ -23,11 +23,9 @@ void port2_ISR (void){
 
 
 void receivePPacket(char length, char *payload, char rssi){
-	TURN_ON_GREEN_LED;
    // Lehetne ide CRC kód ellenőrzést tenni, de most ezt hagyjuk
    // Egyszerűen csak továbbítjuk a felső rétegnek
 	LINE_BREAK;
-	P1OUT ^= 0x03;
    receiveDLPacket(length, payload, rssi);
 }
 
@@ -47,7 +45,6 @@ void sendPPacketToSerialPort(char *buffer){
    LINE_BREAK;
    sendString("BaseStationNode PhysicLayer elkulte a NetworkBuildPacket-et!");
    LINE_BREAK;
-   TURN_ON_RED_LED;
    char length[5];
 
    itoa(buffer[0], length, 10);
