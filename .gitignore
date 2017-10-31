@@ -18,3 +18,7 @@ hs_err_pid*
 
 
 \.metadata/
+
+MeasureNode/Release/
+
+BaseStationNode/Release/
