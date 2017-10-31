@@ -40,6 +40,7 @@ void receiveDLPacket(char length, char *payload, char rssi){
 	messageType = payload[2];
 	distance = payload[3];
 	parentnode = payload[4];
+receiveWhateverMessageInTheAirDLLPacetToSerialPort(length, payload, rssi);
 #ifdef VERBOSE
 	if(to== BROADCASTPACKET){
 		receiveBroadcastPacket(length, payload);
@@ -111,7 +112,50 @@ void sendNetworkPacketToSerialPort(char *buffer){
    LINE_BREAK;
 }
 
+void receiveWhateverMessageInTheAirDLLPacetToSerialPort(char length, char *buffer, unsigned char rssi){
+	sendString("--------------------------------------------------------------------------------------------------");
+	LINE_BREAK;
+	LINE_BREAK;
+	sendString("                                       WHATEVER MESSAGE                                           ");
+	DOUBLE_LINE_BREAK;
+	sendString("A BaseStationDataLinkLayer ELKAPOTT EGY RANDOM UZENETET!!!");
+	LINE_BREAK;
+	sendString("to|from|messagetype|distance|parentnode|source|");
+	LINE_BREAK;
+	sendString("DLL payload: ");
+	LINE_BREAK;
+	sendChar(buffer[0]+'0');
+	sendChar(buffer[1]+'0');
+	sendChar(buffer[2]+'0');
+	sendChar(buffer[3]+'0');
+	sendChar(buffer[4]+'0');
+	sendChar(buffer[5]+'0');
+	DOUBLE_LINE_BREAK;
 
+	sendString("To: ");
+	sendChar(buffer[0]+'0');
+	sendString(" | ");
+	sendString("From: ");
+	sendChar(buffer[1]+'0');
+	sendString(" | ");
+	sendString("Message Type: ");
+	sendChar(buffer[2]+'0');
+	sendString(" | ");
+	sendString("Distance: ");
+	sendChar(buffer[3]+'0');
+	sendString(" | ");
+	sendString("Parent Node: ");
+	sendChar(buffer[4]+'0');
+	sendString(" | ");
+	sendString("Source: ");
+	sendChar(buffer[5]+'0');
+	sendString(" | ");
+	LINE_BREAK;
+	sendString("                                       END OF THE WHATEVER MESSAGE                                ");
+	LINE_BREAK;
+	sendString("--------------------------------------------------------------------------------------------------");
+	LINE_BREAK;
+}
 void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer, unsigned char rssi){
 	memcpy(measurementData, buffer+6, 5); // szerintem 10 byte nem csak 5
 	// memcpy(rssi, buffer+6+measurementDataLength, rssilength);
