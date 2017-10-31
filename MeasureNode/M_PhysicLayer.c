@@ -4,7 +4,7 @@
 #include "M_DataLinkLayer.h"
 #include "utility.h"
 
-char rxBuffer[60];
+char rxBuffer[70];
 
 // ISR for received packet
 // The ISR assumes the int came from the pin attached to GDO0 and therefore
@@ -24,7 +24,7 @@ void port2_ISR (void){
 
 
 void receivePPacket(char length, char *payload, char rssi){
-	reveivePPacketFromSerialPort(length, payload);
+	//reveivePPacketFromSerialPort(length, payload);
 	receiveDLPacket(length, payload, rssi);
 }
 

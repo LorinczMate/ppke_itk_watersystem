@@ -28,11 +28,11 @@ void ConfigureAdc(void);
 extern char paTable[];		// power table for C2500
 extern char paTableLen;
 
-char txBuffer[20];  // Ez a küldött csomagok tárolására szolgáló buffer
-char rxBuffer[20];  // Ez a fogadott csomagok tárolására szolgáló buffer
+char txBuffer[70];  // Ez a küldött csomagok tárolására szolgáló buffer 20
+char rxBuffer[70];  // Ez a fogadott csomagok tárolására szolgáló buffer 20
 unsigned int i;
 
-unsigned char myAddress = 10;
+unsigned char myAddress = 2;
 
 int main(void) {
 	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT

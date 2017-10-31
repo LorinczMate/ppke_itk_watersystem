@@ -55,7 +55,7 @@ void receiveDLPacket(char length, char *payload, char rssi){
 			source = payload[5];
 			from = myAddress;
 			to = parentnode;
-			receiveMeasurementDLLPacketToSerialPort(length, payload);
+			//receiveMeasurementDLLPacketToSerialPort(length, payload);
 			//így ebben a legutolsó RSSI még nem kerül bele!
 			//arrayShiftRight(length-6, payload+6, rssi);
 			//rssi length hosszának növelése kellene!
@@ -77,7 +77,7 @@ void sendNetworkBuildDLLPacket(char messageType, char myDistance, char from, cha
    arrayShiftRight(payloadLength++, payload, messageType);
    arrayShiftRight(payloadLength++, payload, myAddress);
    arrayShiftRight(payloadLength++, payload, BROADCASTPACKET); //BROADCASTPACKET
-   sendNetworkPacketToSerialPort(payload);
+   //sendNetworkPacketToSerialPort(payload);
    sendPPacket(payloadLength, payload);
    BLINK_BOTH_LED;
    __delay_cycles(500000);
@@ -123,7 +123,7 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, c
 	arrayShiftRight(payloadLength++, payload, messageType);
 	arrayShiftRight(payloadLength++, payload, myAddress);
 	arrayShiftRight(payloadLength++, payload, parentnode);
-	sendMyMeasurementToSerialPort(payload, measurementData, rssi);
+	//sendMyMeasurementToSerialPort(payload, measurementData, rssi);
 	sendPPacket(payloadLength, payload);
 	TURN_OFF_BOTH_LED;
 	for(int i = 0; i < parentnode*2 + 1; i++){
