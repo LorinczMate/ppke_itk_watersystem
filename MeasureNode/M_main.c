@@ -83,6 +83,12 @@ int main(void) {
 	TI_CC_SPIStrobe(TI_CCxxx0_SRX);           // Initialize CCxxxx in RX mode.
 											  // When a pkt is received, it will
 											  // signal on GDO0 and wake CPU
+	TURN_OFF_BOTH_LED;
+	//villogjon annyit a zöld led ahányas a címe a node-nak, majd maradjon égve a zöld lámpa
+	for (i = 0; i < myAddress*2+1; i++) {
+		__delay_cycles(500000);
+		BLINK_GREEN_LED;
+	}
 	DOUBLE_LINE_BREAK;
 	sendString(
 			"**************************************************************************************************");
@@ -112,10 +118,10 @@ int main(void) {
 	char ADC_Temp[5];
 	char txbuffertmp[20];
 
-	TURN_ON_BOTH_LED;
 
 	while (1) {
 		if (BUTTON_PRESSED) {
+			__delay_cycles(1000000);
 			parentNode = getParentNode();
 			distance = getDistance();
 			if (parentNode != 0) {
@@ -126,7 +132,6 @@ int main(void) {
 				itoa(ADC_value, ADC_Temp, 10);
 				sendMyMeasurementDLPacket(0, parentNode, source, distance,
 						ADC_Temp, 0, txBuffer);
-				P1OUT ^= BIT1;
 			}
 			__delay_cycles(2000);
 		}

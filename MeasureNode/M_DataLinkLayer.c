@@ -46,8 +46,11 @@ void receiveDLPacket(char length, char *payload, char rssi){
     	  parentnode=from;
 		  from = myAddress;
 		  distance = myDistance;
+	    	for (int i = 0; i < parentnode*2+1; i++) {
+				__delay_cycles(500000);
+				BLINK_RED_LED;
+			}
 		  sendNetworkBuildDLLPacket(NETWORKBUILDDATATYPE, myDistance, from, payload);
-		  TURN_ON_GREEN_LED;
       } else if ((messageType == MEASUREMENTDATATYPE) && (to == myAddress)) {
 			source = payload[5];
 			from = myAddress;
@@ -76,6 +79,9 @@ void sendNetworkBuildDLLPacket(char messageType, char myDistance, char from, cha
    arrayShiftRight(payloadLength++, payload, BROADCASTPACKET); //BROADCASTPACKET
    sendNetworkPacketToSerialPort(payload);
    sendPPacket(payloadLength, payload);
+   BLINK_BOTH_LED;
+   __delay_cycles(500000);
+   BLINK_BOTH_LED;
 }
 
 void sendMeasurementDLLPacket(char messageType, char to, char from, char payloadLength, char *payload){
@@ -91,12 +97,14 @@ void sendMeasurementDLLPacket(char messageType, char to, char from, char payload
 	arrayShiftRight(payloadLength++, payload, from);
 	arrayShiftRight(payloadLength++, payload, to);
 	sendPPacket(payloadLength, payload);
+	for(int i = 0; i < to*2 + 1; i++){
+		__delay_cycles(500000);
+		BLINK_BOTH_LED;
+	}
 
 }
 
 void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, char distance, char *measurementData, char payloadLength, char *payload){
-	TURN_ON_RED_LED;
-
 	/*--------------------------
 	A CSOMAG FELÉPÍTÉSE:
 	parentnode|myAddress|messageType|distance|parentnode|myAddress|measurementData|rssi
@@ -117,6 +125,11 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, c
 	arrayShiftRight(payloadLength++, payload, parentnode);
 	sendMyMeasurementToSerialPort(payload, measurementData, rssi);
 	sendPPacket(payloadLength, payload);
+	TURN_OFF_BOTH_LED;
+	for(int i = 0; i < parentnode*2 + 1; i++){
+		__delay_cycles(500000);
+		BLINK_BOTH_LED;
+	}
 
 }
 

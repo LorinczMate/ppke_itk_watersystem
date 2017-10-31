@@ -30,3 +30,6 @@
 #define BUTTON_NOT_PRESSED	   (P1IN & BIT2)
 #define LINE_BREAK			   sendString("\n\r")
 #define DOUBLE_LINE_BREAK	   sendString("\n\r\n\r")
+#define BLINK_GREEN_LED		   P1OUT ^= BIT1
+#define BLINK_RED_LED		   P1OUT ^= BIT0
+#define BLINK_BOTH_LED		   P1OUT ^= 0x03

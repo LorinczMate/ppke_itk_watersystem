@@ -24,7 +24,6 @@ void port2_ISR (void){
 
 
 void receivePPacket(char length, char *payload, char rssi){
-	TURN_ON_GREEN_LED;
 	reveivePPacketFromSerialPort(length, payload);
 	receiveDLPacket(length, payload, rssi);
 }
@@ -36,7 +35,6 @@ void receivePPacket(char length, char *payload, char rssi){
 void sendPPacket(char length, char *payload){
    arrayShiftRight(length, payload, length);
    RFSendPacket(payload, length+1);
-   P1OUT ^= 0x03;
    LINE_BREAK;
    sendString("MeasurementNode PhysicLayer elkuldott egy uzenetet!");
    LINE_BREAK;
