@@ -46,10 +46,7 @@ void receiveDLPacket(char length, char *payload, char rssi){
     	  parentnode=from;
 		  from = myAddress;
 		  distance = myDistance;
-	    	for (int i = 0; i < parentnode*2+1; i++) {
-				__delay_cycles(500000);
-				BLINK_RED_LED;
-			}
+		  blinkLEDsForRecevingNetworkBuildPacket(parentnode);
 		  sendNetworkBuildDLLPacket(NETWORKBUILDDATATYPE, myDistance, from, payload);
       } else if ((messageType == MEASUREMENTDATATYPE) && (to == myAddress)) {
 			source = payload[5];
@@ -60,7 +57,6 @@ void receiveDLPacket(char length, char *payload, char rssi){
 			//arrayShiftRight(length-6, payload+6, rssi);
 			//rssi length hosszának növelése kellene!
 			length++;
-
 			sendMeasurementDLLPacket(MEASUREMENTDATATYPE, to, from, length-6, payload+6); //source-t külön át kéne adni különben a globál sourcot küldi el és ha több eszköz csomópontja egy azonos node ott konfliktus lehet!
       }
    }
@@ -79,9 +75,7 @@ void sendNetworkBuildDLLPacket(char messageType, char myDistance, char from, cha
    arrayShiftRight(payloadLength++, payload, BROADCASTPACKET); //BROADCASTPACKET
    //sendNetworkPacketToSerialPort(payload);
    sendPPacket(payloadLength, payload);
-   BLINK_BOTH_LED;
-   __delay_cycles(500000);
-   BLINK_BOTH_LED;
+   blinkLEDsForSendingNetworkBuildPacket();
 }
 
 void sendMeasurementDLLPacket(char messageType, char to, char from, char payloadLength, char *payload){
@@ -96,12 +90,8 @@ void sendMeasurementDLLPacket(char messageType, char to, char from, char payload
 	arrayShiftRight(payloadLength++, payload, messageType);
 	arrayShiftRight(payloadLength++, payload, from);
 	arrayShiftRight(payloadLength++, payload, to);
+	blinkLEDsForMeasurementPacket(to);
 	sendPPacket(payloadLength, payload);
-	for(int i = 0; i < to*2 + 1; i++){
-		__delay_cycles(500000);
-		BLINK_BOTH_LED;
-	}
-
 }
 
 void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, char distance, char *measurementData, char payloadLength, char *payload){
@@ -125,12 +115,88 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source, c
 	arrayShiftRight(payloadLength++, payload, parentnode);
 	//sendMyMeasurementToSerialPort(payload, measurementData, rssi);
 	sendPPacket(payloadLength, payload);
+	blinkLEDsForMyMeasurementPacket(parentnode);
+
+}
+
+void blinkLEDsForTurningOnTheNode(){
+	/*The Measure node's green LED will blink when one will turn it on as much as its own address.
+	 *At the end the green led will stay on, which shows from this moment that the device is turned on.
+	 * example: source address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
+	 *
+	 * @author		Marcell Zoltan Szalontay
+	 * @date		2017.11.05
+	 */
+	for (int i = 0; i < myAddress*2+1; i++) {
+		__delay_cycles(500000);
+		BLINK_GREEN_LED;
+	}
+}
+
+void blinkLEDsForRecevingNetworkBuildPacket(char parentnode){
+	/*The Measure node's red LED will blink when it receives a NetworkBuilding packet as much as the sender's address.
+	 *At the red the green led will stay on to know that the device is connected to the network.
+	 * example: source address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
+	 *
+	 * @author		Marcell Zoltan Szalontay
+	 * @date		2017.11.05
+	 * @param		parentnode	 The address of the node who sent the NetworkBuild packet and who will be our parent node
+	 */
+
+	for (int i = 0; i < parentnode*2+1; i++) {
+		__delay_cycles(500000);
+		BLINK_RED_LED;
+	}
+}
+
+
+
+void blinkLEDsForSendingNetworkBuildPacket(){
+	/*The Measure node's both LED will blink once when it forwards the NetworkBuild packet.
+	 *At the end the both led will stay on.
+	 * example: source address = 2 : _ | _ | >     means: _: OFF, |: ON, -> stay on the last state
+	 *
+	 * @author		Marcell Zoltan Szalontay
+	 * @date		2017.11.05
+	 */
+
+	BLINK_BOTH_LED;
+	__delay_cycles(500000);
+	BLINK_BOTH_LED;
+}
+
+void blinkLEDsForMeasurementPacket(char to){
+	/*The Measure node's green LED will blink when one will turn it on as much as its own address.
+	 *At the end the green led will stay on.
+	 * example: to  address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
+	 *
+	 * @author		Marcell Zoltan Szalontay
+	 * @date		2017.11.05
+	 * @param		to	 The address of the device to whom the measurement message is transmitted.
+	 */
+
+	TURN_OFF_BOTH_LED;
+	for(int i = 0; i < to*2 + 1; i++){
+		__delay_cycles(500000);
+		BLINK_BOTH_LED;
+	}
+}
+
+void blinkLEDsForMyMeasurementPacket(char parentnode){
+	/*The Measure node's both led will blink as much as our parent nodes address to whom the message is addressed.
+	 *At the end the both led will stay on.
+	 * example: parent nodes address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
+	 *
+	 * @author		Marcell Zoltan Szalontay
+	 * @date		2017.11.05
+	 * @param		parentnode	 The address of the device to whom the measurement message is transmitted.
+	 */
+
 	TURN_OFF_BOTH_LED;
 	for(int i = 0; i < parentnode*2 + 1; i++){
 		__delay_cycles(500000);
 		BLINK_BOTH_LED;
 	}
-
 }
 
 

@@ -85,10 +85,7 @@ int main(void) {
 											  // signal on GDO0 and wake CPU
 	TURN_OFF_BOTH_LED;
 	//villogjon annyit a zöld led ahányas a címe a node-nak, majd maradjon égve a zöld lámpa
-	for (i = 0; i < myAddress*2+1; i++) {
-		__delay_cycles(500000);
-		BLINK_GREEN_LED;
-	}
+	blinkLEDsForTurningOnTheNode();
 	DOUBLE_LINE_BREAK;
 	sendString(
 			"**************************************************************************************************");
