@@ -249,6 +249,10 @@ void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer,
 	sendString(" | ");
 	sendString("RSSI: ");
 	sendString(rssiToSerial);
+
+
+
+
 	/*for(int i=0;i<distancetmp;i++){
 	 itoa(rssi[i],rssilengthtmp,10);
 	 sendString(rssilengthtmp);
@@ -290,6 +294,13 @@ void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer,
 	sendString(measurementData);
 	sendString(",");
 	sendString(rssiToSerial);
+
+	/* A csomag hosszából kiszámolni hogy hány hoppon keresztül érkezett a csomag -
+	 * első 6 byte csak a header
+	 * utána 4 byte a mérési csomag, 3 byte az rssi - annyiszor hány hoppon át ment a csomag
+	 * MEGJ: az utolsó RSSI-t itt már a bázis állomás hozzáfűzi a csomaghoz? vagy -1 RSSI-vel kell számoolni a kiiratást?
+	 *IDE - a többi le van szarva, ezt fogja a JAVAs adatkoncentrátor feldolgozni.
+	 */
 #endif
 }
 
