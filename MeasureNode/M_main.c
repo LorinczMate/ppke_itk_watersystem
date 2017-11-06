@@ -17,19 +17,14 @@
 #include "M_DataLinkLayer.h"
 #include "msp430x22x4.h"
 
-// Global variables
 unsigned int ADC_value = 0;
 
-// Function prototypes
 void ConfigureAdc(void);
-
-// bit masks for P1 on the RF2500 target board
 
 extern char paTable[];		// power table for C2500
 extern char paTableLen;
-
-char txBuffer[70];  // Ez a küldött csomagok tárolására szolgáló buffer 20
-char rxBuffer[70];  // Ez a fogadott csomagok tárolására szolgáló buffer 20
+char txBuffer[70];
+char rxBuffer[70];
 unsigned int i;
 
 unsigned char myAddress = 2;
@@ -39,7 +34,7 @@ int main(void) {
 	BCSCTL1 = CALBC1_1MHZ;          // Set DCO (Digitally controlled oscillator)
 	DCOCTL = CALDCO_1MHZ;                     // Set DCO
 
-	P2SEL |= BIT1;					// ADC input pin P2.1
+	P2SEL |= BIT1;					// A__bis_SR_registerDC input pin P2.1
 	ConfigureAdc();					// ADC set-up function call
 	__enable_interrupt();
 
@@ -49,7 +44,7 @@ int main(void) {
 
 	TI_CC_SPISetup();                         // Initialize SPI port
 	TI_CC_PowerupResetCCxxxx();               // Reset CCxxxx
-	writeRFSettings();                        // Write RF settings to config reg
+	writeRFSettings();                       // Write RF settings to config reg
 	TI_CC_SPIWriteBurstReg(TI_CCxxx0_PATABLE, paTable, paTableLen); //Write PATABLE
 
 	// Configure ports -- switch inputs, LEDs, GDO0 to RX packet info from CCxxxx
@@ -60,9 +55,9 @@ int main(void) {
 
 	P1REN |= SW1_MASK; //  enable pullups on SW1
 	P1OUT |= SW1_MASK;
-	//P1IES = SW1_MASK; //Int on falling edge
-	//P1IFG &= ~(SW1_MASK); //Clr flag for interrupt
-	//P1IE = SW1_MASK; //enable input interrupt
+	P1IES = SW1_MASK; //Int on falling edge
+	P1IFG &= ~(SW1_MASK); //Clr flag for interrupt
+	P1IE = SW1_MASK; //enable input interrupt
 
 	// Configure LED outputs on port 1
 	P1DIR = LED1_MASK + LED2_MASK; //Outputs
@@ -80,34 +75,13 @@ int main(void) {
 	TI_CC_GDO0_PxIE |= TI_CC_GDO0_PIN;      // Enable interrupt on end of packet
 
 	// turn on the CC2500 in receive mode
-	TI_CC_SPIStrobe(TI_CCxxx0_SRX);           // Initialize CCxxxx in RX mode.
+	TI_CC_SPIStrobe(TI_CCxxx0_SRX);          // Initialize CCxxxx in RX mode.
 											  // When a pkt is received, it will
 											  // signal on GDO0 and wake CPU
 	TURN_OFF_BOTH_LED;
-	//villogjon annyit a zöld led ahányas a címe a node-nak, majd maradjon égve a zöld lámpa
-	blinkLEDsForTurningOnTheNode();
-	DOUBLE_LINE_BREAK;
-	sendString(
-			"**************************************************************************************************");
-	LINE_BREAK;
-	sendString(
-			"                                      MEASURENODE                                                 ");
-	LINE_BREAK;
-	sendString(
-			"                                      ADDRESS: ");
-	sendChar(myAddress + '0');
-	LINE_BREAK;
-	sendString(
-			"**************************************************************************************************");
-	DOUBLE_LINE_BREAK;
-	sendString("Jelenleg egy MeasureNode van sorosportra csatakoztatva.");
-	LINE_BREAK;
-	sendString(
-			"A meresi adat kuldesehez, kerlek nyomd meg a gombot a controlleren!");
-	LINE_BREAK;
-
 	__bis_SR_register(GIE);                   // Enter LPM3, enable interrupts
-
+	blinkLEDsForTurningOnTheNode();
+		nodeIntroductionToSerialPort();
 	initLayer(myAddress);
 	char parentNode;
 	char distance;
@@ -117,69 +91,29 @@ int main(void) {
 
 
 	while (1) {
-		if (BUTTON_PRESSED) {
-			__delay_cycles(1000000);
-			parentNode = getParentNode();
-			distance = getDistance();
-			if (parentNode != 0) {
-				__delay_cycles(1000);		// Wait for ADC Ref to settle
-				ADC10CTL0 |= ENC + ADC10SC;	// Sampling and conversion start
-				__bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
-				ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
-				itoa(ADC_value, ADC_Temp, 10);
-				sendMyMeasurementDLPacket(0, parentNode, source, distance,
-						ADC_Temp, 0, txBuffer);
-			}
-			__delay_cycles(2000);
+		__bis_SR_register(CPUOFF + GIE);
+		__delay_cycles(1000000);
+		parentNode = getParentNode();
+		distance = getDistance();
+		if (parentNode != UNDEDINED_PARENT_NODE) {
+			//__delay_cycles(1000);		// Wait for ADC Ref to settle
+			putADCInBuffer(ADC_Temp);
+			sendMyMeasurementDLPacket(0, parentNode, source, distance,
+					ADC_Temp, 0, txBuffer);
 		}
 	}
-}
-
-// ADC10 interrupt service routine
-#pragma vector=ADC10_VECTOR
-__interrupt void ADC10_ISR(void) {
-	__bic_SR_register_on_exit(CPUOFF);        // Return to active mode }
 }
 
 // Function containing ADC set-up
 void ConfigureAdc(void) {
 	ADC10CTL1 = INCH_1 + ADC10DIV_3;         // Channel 3, ADC10CLK/3
-	ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON + ADC10IE; // Vcc & Vss as reference, Sample and hold for 64 Clock cycles, ADC on, ADC interrupt enable
+	ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON;// + ADC10IE; // Vcc & Vss as reference, Sample and hold for 64 Clock cycles, ADC on, ADC interrupt enable
 	ADC10AE0 |= BIT1;                         // ADC input enable P2.1
 }
-/*
+
  // Port 1 interrupt service routine
- #pragma vector=PORT1_VECTOR
- __interrupt void Port_1(void) {
- sendString("interrupt handler is working");
- LINE_BREAK;
- char parentNode;
- char distance;
- char source = myAddress;
- char ADC_Temp[5];
- char txbuffertmp[20];
- if (P1IFG & BIT2) { // A minket érdeklő interrupt jött be? (Más most úgysincs...)
- if (BUTTON_PRESSED) {
- TURN_ON_RED_LED;
- sendString("button pressed");
- LINE_BREAK;
- parentNode = getParentNode();
- distance = getDistance();
- if (parentNode != 0) {
- __delay_cycles(1000);		// Wait for ADC Ref to settle
- ADC10CTL0 |= ENC + ADC10SC;	// Sampling and conversion start
- __bis_SR_register(CPUOFF + GIE);// Low Power Mode 0 with interrupts enabled
- ADC_value = ADC10MEM;// Assigns the value held in ADC10MEM to the integer called ADC_value
- itoa(ADC_value, ADC_Temp, 10);
- __delay_cycles(300000);
- sendMyMeasurementDLPacket(0, parentNode, source, distance,
- ADC_Temp, 0, txBuffer);
- sendString("Measure packet sent!");
- LINE_BREAK;
- }
- }
- P1OUT ^= BIT1;
- P1IFG &= ~BIT2;
- }
- }
- */
+#pragma vector=PORT1_VECTOR
+__interrupt void Port_1(void) {
+	__bic_SR_register_on_exit(CPUOFF);
+	P1IFG &= ~(SW1_MASK);
+}
