@@ -40,7 +40,7 @@ void receiveDLPacket(char length, char *payload, char rssi) {
 	messageType = payload[2];
 	distance = payload[3];
 	parentnode = payload[4];
-	receiveWhateverMessageInTheAirDLLPacetToSerialPort(length, payload, rssi);
+	//receiveWhateverMessageInTheAirDLLPacetToSerialPort(length, payload, rssi);
 #ifdef VERBOSE
 	if (to == BROADCASTPACKET) {
 		receiveBroadcastPacket(length, payload);
@@ -201,8 +201,8 @@ void receiveWhateverMessageInTheAirDLLPacetToSerialPort(char length,
 }
 void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer,
 		unsigned char rssi) {
-	memcpy(measurementData, buffer + 6, 5); // szerintem 10 byte nem csak 5
-	// memcpy(rssi, buffer+6+measurementDataLength, rssilength);
+	memcpy(measurementData, buffer + 6, 4);
+	measurementData[4] = 0;
 	char rssiToSerial[5];
 	itoa(rssi, rssiToSerial, 10);
 #ifdef VERBOSE
