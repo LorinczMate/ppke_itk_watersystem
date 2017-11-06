@@ -16,6 +16,7 @@
 #include "UART.h"
 #include "M_DataLinkLayer.h"
 #include "msp430x22x4.h"
+#include "timer.h"
 
 unsigned int ADC_value = 0;
 
@@ -76,20 +77,21 @@ int main(void) {
 
 	// turn on the CC2500 in receive mode
 	TI_CC_SPIStrobe(TI_CCxxx0_SRX);          // Initialize CCxxxx in RX mode.
-											  // When a pkt is received, it will
-											  // signal on GDO0 and wake CPU
-	TURN_OFF_BOTH_LED;
+											 // When a pkt is received, it will
+											 // signal on GDO0 and wake CPU
+	TURN_OFF_BOTH_LED
+	;
 	__bis_SR_register(GIE);                   // Enter LPM3, enable interrupts
 	blinkLEDsForTurningOnTheNode();
-		nodeIntroductionToSerialPort();
+	nodeIntroductionToSerialPort();
 	initLayer(myAddress);
 	char parentNode;
 	char distance;
 	char source = myAddress;
 	char ADC_Temp[5];
 	char txbuffertmp[20];
-
-
+	initTimerB(0xFFFF);
+	TIMER_OFF;
 	while (1) {
 		__bis_SR_register(CPUOFF + GIE);
 		__delay_cycles(1000000);
@@ -98,8 +100,8 @@ int main(void) {
 		if (parentNode != UNDEDINED_PARENT_NODE) {
 			//__delay_cycles(1000);		// Wait for ADC Ref to settle
 			putADCInBuffer(ADC_Temp);
-			sendMyMeasurementDLPacket(0, parentNode, source, distance,
-					ADC_Temp, 0, txBuffer);
+			sendMyMeasurementDLPacket(0, parentNode, source, distance, ADC_Temp,
+					0, txBuffer);
 		}
 	}
 }
@@ -107,13 +109,19 @@ int main(void) {
 // Function containing ADC set-up
 void ConfigureAdc(void) {
 	ADC10CTL1 = INCH_1 + ADC10DIV_3;         // Channel 3, ADC10CLK/3
-	ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON;// + ADC10IE; // Vcc & Vss as reference, Sample and hold for 64 Clock cycles, ADC on, ADC interrupt enable
+	ADC10CTL0 = SREF_0 + ADC10SHT_3 + ADC10ON; // + ADC10IE; // Vcc & Vss as reference, Sample and hold for 64 Clock cycles, ADC on, ADC interrupt enable
 	ADC10AE0 |= BIT1;                         // ADC input enable P2.1
 }
 
- // Port 1 interrupt service routine
+// Port 1 interrupt service routine
 #pragma vector=PORT1_VECTOR
-__interrupt void Port_1(void) {
+__interrupt void wakeUpFromPort1BUTTON(void) {
+	TIMER_ON;
 	__bic_SR_register_on_exit(CPUOFF);
 	P1IFG &= ~(SW1_MASK);
+}
+
+__attribute__((interrupt(TIMERB0_VECTOR)))
+void wakeUpFromTimer(void) {
+	__bic_SR_register_on_exit(CPUOFF);
 }
