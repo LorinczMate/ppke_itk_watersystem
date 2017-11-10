@@ -1,4 +1,4 @@
-#define VERBOSE
+//#define VERBOSE
 #include "BS_DataLinkLayer.h"
 #include "utility.h"
 #include "BS_PhysicLayer.h"
@@ -51,13 +51,16 @@ void receiveDLPacket(char length, char *payload, char rssi) {
 		if (messageType == MEASUREMENTDATATYPE) {
 			source = payload[5];
 			blinkLEDsForRecivigMeasurementPacket(from);
+			char temprssi[4];
+			itoa(rssi, temprssi, 10);
+			memcpy(payload + length - 3, temprssi, 3);
 			receiveMeasurementDLLPacketToSerialPort(length, payload, rssi);
 			TURN_OFF_RED_LED;
 		}
 	}
 }
 
-void blinkLEDsForTurningOnTheNode(){
+void blinkLEDsForTurningOnTheNode() {
 	/*The BaseStation node's green LED will blink when one will turn it on as much as its own address.
 	 *At the end the green led will stay on, which shows from this moment that the device is turned on.
 	 * example: source address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
@@ -65,12 +68,11 @@ void blinkLEDsForTurningOnTheNode(){
 	 * @author		Marcell Zoltan Szalontay
 	 * @date		2017.11.05
 	 */
-	for (int i = 0; i < myAddress*2+1; i++) {
+	for (int i = 0; i < myAddress * 2 + 1; i++) {
 		__delay_cycles(500000);
 		BLINK_GREEN_LED;
 	}
 }
-
 
 void blinkLEDsForRecivigMeasurementPacket(char from) {
 	/*The BaseStation node's red LED will blink when its receiving a measurement packet as much as the source node's address.
@@ -250,9 +252,6 @@ void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer,
 	sendString("RSSI: ");
 	sendString(rssiToSerial);
 
-
-
-
 	/*for(int i=0;i<distancetmp;i++){
 	 itoa(rssi[i],rssilengthtmp,10);
 	 sendString(rssilengthtmp);
@@ -260,6 +259,11 @@ void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer,
 	 }*/LINE_BREAK;
 	sendString(
 			"--------------------------------------------------------------------------------------------------");
+	LINE_BREAK;
+	sendString("Package length: ");
+	char package_length[5];
+	itoa(length, package_length, 10);
+	sendString(package_length);
 	LINE_BREAK;
 	sendChar(buffer[0] + '0');
 	sendString(",");
@@ -274,33 +278,87 @@ void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer,
 	sendChar(buffer[5] + '0');
 	sendString(",");
 	sendString(measurementData);
+
+	DOUBLE_LINE_BREAK;
+	sendString("UJ PACKAGE: ");
+	sendChar(buffer[0] + '0');
 	sendString(",");
-	sendString(rssiToSerial);
+	sendChar(buffer[1] + '0');
+	sendString(",");
+	sendChar(buffer[2] + '0');
+	sendString(",");
+	sendChar(buffer[3] + '0');
+	sendString(",");
+	sendChar(buffer[4] + '0');
+	sendString(",");
+	sendChar(buffer[5] + '0');
+	int farthestNodeDistance = (length-PACKAGE_HEADER)/PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT;
+	for(int i = 0; i < farthestNodeDistance; i++){
+		char iThNodeAddress[] = {0,0};
+		char iThAdressTemp = 0;
+		char iThMeasurementData[5] = {0, 0, 0, 0, 0};
+		char iThRSSI[4] = {0, 0, 0, 0};
+		//memcpy(iThAdressTemp, buffer + PACKAGE_HEADER + i * PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT, ADDRESS_LENGTH);
+		itoa(buffer[(PACKAGE_HEADER + i * PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT)], iThNodeAddress, 10);
+		memcpy(iThMeasurementData, buffer + PACKAGE_HEADER + ADDRESS_LENGTH + i * PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT, MEASUREMENTDATA_LENGTH);
+		memcpy(iThRSSI, buffer + PACKAGE_HEADER + ADDRESS_LENGTH + MEASUREMENTDATA_LENGTH + i * PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT, RSSI_LENGTH);
+		sendString(",");
+		sendString(iThNodeAddress+0);
+		sendString(",");
+		sendString(iThMeasurementData);
+		sendString(",");
+		sendString(iThRSSI);
+	}
+
+	DOUBLE_LINE_BREAK;
+	sendString("entire packet: ");
+	char tmpPacket[25];
+	itoa(buffer, tmpPacket, 10);
+	LINE_BREAK;
+	sendString(tmpPacket);
+	LINE_BREAK;
+
+	DOUBLE_LINE_BREAK;
 	DOUBLE_LINE_BREAK;
 
-#else
-	sendChar(buffer[0]+'0');
-	sendString(",");
-	sendChar(buffer[1]+'0');
-	sendString(",");
-	sendChar(buffer[2]+'0');
-	sendString(",");
-	sendChar(buffer[3]+'0');
-	sendString(",");
-	sendChar(buffer[4]+'0');
-	sendString(",");
-	sendChar(buffer[5]+'0');
-	sendString(",");
-	sendString(measurementData);
-	sendString(",");
-	sendString(rssiToSerial);
+	for(int i = 0; i < length; i ++){
+		char temp[]={0, 0};
+		itoa(buffer[i], temp, 10);
+		sendString(temp);
+		LINE_BREAK;
+	}
 
-	/* A csomag hosszából kiszámolni hogy hány hoppon keresztül érkezett a csomag -
-	 * első 6 byte csak a header
-	 * utána 4 byte a mérési csomag, 3 byte az rssi - annyiszor hány hoppon át ment a csomag
-	 * MEGJ: az utolsó RSSI-t itt már a bázis állomás hozzáfűzi a csomaghoz? vagy -1 RSSI-vel kell számoolni a kiiratást?
-	 *IDE - a többi le van szarva, ezt fogja a JAVAs adatkoncentrátor feldolgozni.
-	 */
+#else
+	sendChar(buffer[0] + '0');
+	sendString(",");
+	sendChar(buffer[1] + '0');
+	sendString(",");
+	sendChar(buffer[2] + '0');
+	sendString(",");
+	sendChar(buffer[3] + '0');
+	sendString(",");
+	sendChar(buffer[4] + '0');
+	sendString(",");
+	sendChar(buffer[5] + '0');
+	int farthestNodeDistance = (length-PACKAGE_HEADER)/PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT;
+	for(int i = 0; i < farthestNodeDistance; i++){
+		char iThNodeAddress[] = {0,0};
+		char iThAdressTemp = 0;
+		char iThMeasurementData[5] = {0, 0, 0, 0, 0};
+		char iThRSSI[4] = {0, 0, 0, 0};
+		//memcpy(iThAdressTemp, buffer + PACKAGE_HEADER + i * PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT, ADDRESS_LENGTH);
+		itoa(buffer[(PACKAGE_HEADER + i * PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT)], iThNodeAddress, 10);
+		memcpy(iThMeasurementData, buffer + PACKAGE_HEADER + ADDRESS_LENGTH + i * PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT, MEASUREMENTDATA_LENGTH);
+		memcpy(iThRSSI, buffer + PACKAGE_HEADER + ADDRESS_LENGTH + MEASUREMENTDATA_LENGTH + i * PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT, RSSI_LENGTH);
+		sendString(",");
+		sendString(iThNodeAddress+0);
+		sendString(",");
+		sendString(iThMeasurementData);
+		sendString(",");
+		sendString(iThRSSI);
+	}
+
+
 #endif
 }
 

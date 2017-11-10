@@ -65,11 +65,7 @@ void receiveDLPacket(char length, char *payload, char rssi) {
 			source = payload[5];
 			from = myAddress;
 			to = parentnode;
-			//receiveMeasurementDLLPacketToSerialPort(length, payload);
-			//így ebben a legutolsó RSSI még nem kerül bele!
-			//arrayShiftRight(length-6, payload+6, rssi);
-			//rssi length hosszának növelése kellene!
-			length++;
+
 			sendString("The measurement packet is transmitted!");
 			sendMeasurementDLLPacket(MEASUREMENTDATATYPE, to, from, length - 6,
 					payload + 6, rssi); //source-t külön át kéne adni különben a globál sourcot küldi el és ha több eszköz csomópontja egy azonos node ott konfliktus lehet!
@@ -87,7 +83,7 @@ void sendNetworkBuildDLLPacket(char messageType, char myDistance, char from,
 	arrayShiftRight(payloadLength++, payload, myDistance);
 	arrayShiftRight(payloadLength++, payload, messageType);
 	arrayShiftRight(payloadLength++, payload, myAddress);
-	arrayShiftRight(payloadLength++, payload, 0); //BROADCASTPACKET
+	arrayShiftRight(payloadLength++, payload, 5); //BROADCASTPACKET
 	//sendNetworkPacketToSerialPort(payload);
 	sendPPacket(payloadLength, payload);
 	blinkLEDsForSendingNetworkBuildPacket();
@@ -101,10 +97,12 @@ void sendMeasurementDLLPacket(char messageType, char to, char from,
 	itoa(rssi, rssi_str, 10);
 	for (int i = 0; i < rssilength; i++) {
 		arrayShiftRight(payloadLength++, payload, rssi_str[2 - i]);
-	} //rssi értékek forditva fognak bemásolódni
+	}
 	for (int i = 0; i < measurementlength; i++) {
 		arrayShiftRight(payloadLength++, payload, measurement[3 - i]);
-	} // szintén
+	}
+	arrayShiftRight(payloadLength++, payload, myAddress);
+
 	arrayShiftRight(payloadLength++, payload, source);
 	arrayShiftRight(payloadLength++, payload, parentnode);
 	arrayShiftRight(payloadLength++, payload, myDistance);
@@ -112,6 +110,10 @@ void sendMeasurementDLLPacket(char messageType, char to, char from,
 	arrayShiftRight(payloadLength++, payload, from);
 	arrayShiftRight(payloadLength++, payload, to);
 	blinkLEDsForMeasurementPacket(to);
+	sendPPacket(payloadLength, payload);
+}
+
+void sendBullshit(char payloadLength, char *payload){
 	sendPPacket(payloadLength, payload);
 }
 
@@ -128,10 +130,12 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source,
 	putADCInBuffer(measurement);
 	for (int i = 0; i < rssilength; i++) {
 		arrayShiftRight(payloadLength++, payload, 'n');
-	} //rssi értékek forditva fognak bemásolódni
+	}
 	for (int i = 0; i < measurementlength; i++) {
 		arrayShiftRight(payloadLength++, payload, measurement[3 - i]);
-	} // szintén
+	}
+	arrayShiftRight(payloadLength++, payload, myAddress);
+
 	arrayShiftRight(payloadLength++, payload, myAddress);
 	arrayShiftRight(payloadLength++, payload, parentnode);
 	arrayShiftRight(payloadLength++, payload, myDistance);
@@ -143,6 +147,7 @@ void sendMyMeasurementDLPacket(char messageType, char parentnode, char source,
 	blinkLEDsForMyMeasurementPacket(parentnode);
 
 }
+
 
 void blinkLEDsForTurningOnTheNode() {
 	/*The Measure node's green LED will blink when one will turn it on as much as its own address.

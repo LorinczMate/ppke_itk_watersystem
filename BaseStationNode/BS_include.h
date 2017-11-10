@@ -34,4 +34,10 @@
 #define BLINK_RED_LED		   P1OUT ^= BIT0
 #define BLINK_BOTH_LED		   P1OUT ^= 0x03
 
+#define PACKAGE_HEADER  								6 //byte
+#define PERIODICALLY_PEPETITIVE_PACKAGE_CONTENT_LENGHT  8 //byte
+#define ADDRESS_LENGTH									1 //byte
+#define MEASUREMENTDATA_LENGTH							4 //byte
+#define RSSI_LENGTH										3 //byte
+
 

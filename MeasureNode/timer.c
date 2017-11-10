@@ -11,7 +11,6 @@ void initTimerB(unsigned short period){
   TBCCR0 = period;      // A megszakítás sebessége. Minél kisebb, annál sûrûbb.
                        // 10000 => 0.84sec 12 =1ms
   TBCTL = MC_1+TBSSEL_1; // Timer órajele és viselkedése
-  TIMER_ON;
 }
 
 

@@ -14,8 +14,6 @@ void port2_ISR (void){
    unsigned char len=40;
    char status[2];
    if (RFReceivePacket(rxBuffer,&len, status)){
-	   rxBuffer[len] = status[0];
-	   len+=1;
       receivePPacket(len, rxBuffer, status[0]); //// ??? status[0] vagy a status[1] az RSSI? Adatlap
    } 
    P2IFG &= ~TI_CC_GDO0_PIN;

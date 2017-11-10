@@ -15,8 +15,6 @@ void port2_ISR (void){
    unsigned char len=40;
    char status[2];
    if (RFReceivePacket(rxBuffer,&len, status)){
-	   rxBuffer[len] = status[0];
-	   len+=1;
       receivePPacket(len, rxBuffer, status[0]); //// ??? status[0] vagy a status[1] az RSSI? Adatlap
    } 
    P2IFG &= ~TI_CC_GDO0_PIN;
@@ -37,9 +35,6 @@ void sendPPacket(char length, char *payload){
    RFSendPacket(payload, length+1);
    LINE_BREAK;
    sendString("MeasurementNode PhysicLayer elkuldott egy uzenetet!");
-   LINE_BREAK;
-   sendString("PL payload: ");
-   sendString(payload);
    LINE_BREAK;
 }
 
