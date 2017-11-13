@@ -3,6 +3,8 @@
 #include "M_PhysicLayer.h"
 #include "UART.h"
 #include "M_include.h"
+#include "M_main.h"
+
 
 char myAddress;
 char myDistance = 9;
@@ -13,11 +15,13 @@ char to;
 char from;
 char messageType;
 char distance;
+char versionID;
 char parentnode = UNDEDINED_PARENT_NODE;
 char source;
 char measurement[5];
 char rssilength = 3;
 char measurementlength = 4;
+char myVersionID = 0;
 
 void initLayer(char _myAddress) {
 	myAddress = _myAddress;
@@ -42,407 +46,408 @@ void receiveDLPacket(char length, char *payload, char rssi) {
 
 	if (to == myAddress || to == BROADCASTPACKET) {
 		// payload[length]=0;
-		if ((messageType == NETWORKBUILDDATATYPE)
-				&& (myDistance > (distance + 1))) {
-			sendString(
-					"I gona change my parameters cause i got a better offer from: ");
-			sendChar(payload[1] + '0');
-			receiveNetworkBuildDLLPacketToSerialPort(payload);
-			LINE_BREAK;
-			sendString("My previous distance was: ");
-			sendChar(myDistance + '0');
-			myDistance = distance + 1;
-			LINE_BREAK;
-			sendString("... and my new distance is: ");
-			sendChar(myDistance + '0');
-			parentnode = from;
-			from = myAddress;
-			distance = myDistance;
-			blinkLEDsForRecevingNetworkBuildPacket(parentnode);
-			sendNetworkBuildDLLPacket(NETWORKBUILDDATATYPE, myDistance, from,
-					payload);
-		} else if ((messageType == MEASUREMENTDATATYPE) && (to == myAddress)) {
-			source = payload[5];
-			from = myAddress;
-			to = parentnode;
 
-			sendString("The measurement packet is transmitted!");
-			sendMeasurementDLLPacket(MEASUREMENTDATATYPE, to, from, length - 6,
-					payload + 6, rssi); //source-t külön át kéne adni különben a globál sourcot küldi el és ha több eszköz csomópontja egy azonos node ott konfliktus lehet!
+		if (messageType == NETWORKBUILDDATATYPE) {
+			versionID = payload[4];
+			if((myDistance > (distance + 1)) || (myVersionID < versionID)){
+						receiveNetworkBuildDLLPacketToSerialPort(payload);
+						myDistance = distance + 1;
+						sendChar(myDistance + '0');
+						parentnode = from;
+						from = myAddress;
+						distance = myDistance;
+						myVersionID = versionID;
+						blinkLEDsForRecevingNetworkBuildPacket(parentnode);
+						sendNetworkBuildDLLPacket(NETWORKBUILDDATATYPE,
+								myDistance, from, payload);
+					}
+				} else if ((messageType == MEASUREMENTDATATYPE)
+						&& (to == myAddress)) {
+					resetTimerDelayer();
+					source = payload[5];
+					from = myAddress;
+					to = parentnode;
+
+					sendString("The measurement packet is transmitted!");
+					sendMeasurementDLLPacket(MEASUREMENTDATATYPE, to, from,
+							length - 6, payload + 6, rssi); //source-t külön át kéne adni különben a globál sourcot küldi el és ha több eszköz csomópontja egy azonos node ott konfliktus lehet!
+				}
+			}
 		}
-	}
-}
 
-void sendNetworkBuildDLLPacket(char messageType, char myDistance, char from,
-		char *payload) { //címzett, üzenet hossza + az üzenet.
-	/*--------------------------
-	 A CSOMAG FELÉPÍTÉSE:
-	 BROADCASTPACKET|myAddress|messageType|distance|
-	 */
-	int payloadLength = 0;
-	arrayShiftRight(payloadLength++, payload, myDistance);
-	arrayShiftRight(payloadLength++, payload, messageType);
-	arrayShiftRight(payloadLength++, payload, myAddress);
-	arrayShiftRight(payloadLength++, payload, 5); //BROADCASTPACKET
-	//sendNetworkPacketToSerialPort(payload);
-	sendPPacket(payloadLength, payload);
-	blinkLEDsForSendingNetworkBuildPacket();
-}
+		void sendNetworkBuildDLLPacket(char messageType, char myDistance,
+				char from, char *payload) { //címzett, üzenet hossza + az üzenet.
+			/*--------------------------
+			 A CSOMAG FELÉPÍTÉSE:
+			 BROADCASTPACKET|myAddress|messageType|distance|versionID|
+			 */
+			int payloadLength = 0;
+			arrayShiftRight(payloadLength++, payload, myDistance);
+			arrayShiftRight(payloadLength++, payload, messageType);
+			arrayShiftRight(payloadLength++, payload, myAddress);
+			arrayShiftRight(payloadLength++, payload, 0); //BROADCASTPACKET
+			//sendNetworkPacketToSerialPort(payload);
+			sendPPacket(payloadLength, payload);
+			blinkLEDsForSendingNetworkBuildPacket();
+		}
 
-void sendMeasurementDLLPacket(char messageType, char to, char from,
-		char payloadLength, char *payload, unsigned char rssi) {
-	__delay_cycles(10000000);
-	putADCInBuffer(measurement);
-	char rssi_str[] = { 0, 0, 0, 0 };
-	itoa(rssi, rssi_str, 10);
-	for (int i = 0; i < rssilength; i++) {
-		arrayShiftRight(payloadLength++, payload, rssi_str[2 - i]);
-	}
-	for (int i = 0; i < measurementlength; i++) {
-		arrayShiftRight(payloadLength++, payload, measurement[3 - i]);
-	}
-	arrayShiftRight(payloadLength++, payload, myAddress);
+		void sendMeasurementDLLPacket(char messageType, char to, char from,
+				char payloadLength, char *payload, unsigned char rssi) {
+			__delay_cycles(10000000);
+			putADCInBuffer(measurement);
+			char rssi_str[] = { 0, 0, 0, 0 };
+			itoa(rssi, rssi_str, 10);
+			for (int i = 0; i < rssilength; i++) {
+				arrayShiftRight(payloadLength++, payload, rssi_str[2 - i]);
+			}
+			for (int i = 0; i < measurementlength; i++) {
+				arrayShiftRight(payloadLength++, payload, measurement[3 - i]);
+			}
+			arrayShiftRight(payloadLength++, payload, myAddress);
 
-	arrayShiftRight(payloadLength++, payload, source);
-	arrayShiftRight(payloadLength++, payload, parentnode);
-	arrayShiftRight(payloadLength++, payload, myDistance);
-	arrayShiftRight(payloadLength++, payload, messageType);
-	arrayShiftRight(payloadLength++, payload, from);
-	arrayShiftRight(payloadLength++, payload, to);
-	blinkLEDsForMeasurementPacket(to);
-	sendPPacket(payloadLength, payload);
-}
+			arrayShiftRight(payloadLength++, payload, source);
+			arrayShiftRight(payloadLength++, payload, parentnode);
+			arrayShiftRight(payloadLength++, payload, myDistance);
+			arrayShiftRight(payloadLength++, payload, messageType);
+			arrayShiftRight(payloadLength++, payload, from);
+			arrayShiftRight(payloadLength++, payload, to);
+			blinkLEDsForMeasurementPacket(to);
+			sendPPacket(payloadLength, payload);
+		}
 
-void sendBullshit(char payloadLength, char *payload){
-	sendPPacket(payloadLength, payload);
-}
+		void sendBullshit(char payloadLength, char *payload) {
+			sendPPacket(payloadLength, payload);
+		}
 
-void sendMyMeasurementDLPacket(char messageType, char parentnode, char source,
-		char distance, char *measurementData, char payloadLength, char *payload) {
-	/*--------------------------
-	 A CSOMAG FELÉPÍTÉSE:
-	 parentnode|myAddress|messageType|distance|parentnode|myAddress|measurementData|rssi
+		void sendMyMeasurementDLPacket(char messageType, char parentnode,
+				char source, char distance, char *measurementData,
+				char payloadLength, char *payload) {
+			/*--------------------------
+			 A CSOMAG FELÉPÍTÉSE:
+			 parentnode|myAddress|messageType|distance|parentnode|myAddress|measurementData|rssi
 
-	 HB_DLLayerben kapott csomag:
-	 to|from|messagetype|distance|parentnode|source|measurementData|rssi
-	 ----------------------------*/
+			 HB_DLLayerben kapott csomag:
+			 to|from|messagetype|distance|parentnode|source|measurementData|rssi
+			 ----------------------------*/
+			resetTimerDelayer();
+			putADCInBuffer(measurement);
+			for (int i = 0; i < rssilength; i++) {
+				arrayShiftRight(payloadLength++, payload, 'n');
+			}
+			for (int i = 0; i < measurementlength; i++) {
+				arrayShiftRight(payloadLength++, payload, measurement[3 - i]);
+			}
+			arrayShiftRight(payloadLength++, payload, myAddress);
 
-	putADCInBuffer(measurement);
-	for (int i = 0; i < rssilength; i++) {
-		arrayShiftRight(payloadLength++, payload, 'n');
-	}
-	for (int i = 0; i < measurementlength; i++) {
-		arrayShiftRight(payloadLength++, payload, measurement[3 - i]);
-	}
-	arrayShiftRight(payloadLength++, payload, myAddress);
+			arrayShiftRight(payloadLength++, payload, myAddress);
+			arrayShiftRight(payloadLength++, payload, parentnode);
+			arrayShiftRight(payloadLength++, payload, myDistance);
+			arrayShiftRight(payloadLength++, payload, messageType);
+			arrayShiftRight(payloadLength++, payload, myAddress);
+			arrayShiftRight(payloadLength++, payload, parentnode);
+			//sendMyMeasurementToSerialPort(payload, measurementData, rssi);
+			sendPPacket(payloadLength, payload);
+			blinkLEDsForMyMeasurementPacket(parentnode);
 
-	arrayShiftRight(payloadLength++, payload, myAddress);
-	arrayShiftRight(payloadLength++, payload, parentnode);
-	arrayShiftRight(payloadLength++, payload, myDistance);
-	arrayShiftRight(payloadLength++, payload, messageType);
-	arrayShiftRight(payloadLength++, payload, myAddress);
-	arrayShiftRight(payloadLength++, payload, parentnode);
-	//sendMyMeasurementToSerialPort(payload, measurementData, rssi);
-	sendPPacket(payloadLength, payload);
-	blinkLEDsForMyMeasurementPacket(parentnode);
+		}
 
-}
+		void blinkLEDsForTurningOnTheNode() {
+			/*The Measure node's green LED will blink when one will turn it on as much as its own address.
+			 *At the end the green led will stay on, which shows from this moment that the device is turned on.
+			 * example: source address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
+			 *
+			 * @author		Marcell Zoltan Szalontay
+			 * @date		2017.11.05
+			 */
+			for (int i = 0; i < myAddress * 2 + 1; i++) {
+				__delay_cycles(500000);
+				BLINK_GREEN_LED;
+			}
+		}
 
+		void blinkLEDsForRecevingNetworkBuildPacket(char parentnode) {
+			/*The Measure node's red LED will blink when it receives a NetworkBuilding packet as much as the sender's address.
+			 *At the red the green led will stay on to know that the device is connected to the network.
+			 * example: source address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
+			 *
+			 * @author		Marcell Zoltan Szalontay
+			 * @date		2017.11.05
+			 * @param		parentnode	 The address of the node who sent the NetworkBuild packet and who will be our parent node
+			 */
 
-void blinkLEDsForTurningOnTheNode() {
-	/*The Measure node's green LED will blink when one will turn it on as much as its own address.
-	 *At the end the green led will stay on, which shows from this moment that the device is turned on.
-	 * example: source address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
-	 *
-	 * @author		Marcell Zoltan Szalontay
-	 * @date		2017.11.05
-	 */
-	for (int i = 0; i < myAddress * 2 + 1; i++) {
-		__delay_cycles(500000);
-		BLINK_GREEN_LED;
-	}
-}
+			for (int i = 0; i < parentnode * 2 + 1; i++) {
+				__delay_cycles(500000);
+				BLINK_RED_LED;
+			}
+		}
 
-void blinkLEDsForRecevingNetworkBuildPacket(char parentnode) {
-	/*The Measure node's red LED will blink when it receives a NetworkBuilding packet as much as the sender's address.
-	 *At the red the green led will stay on to know that the device is connected to the network.
-	 * example: source address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
-	 *
-	 * @author		Marcell Zoltan Szalontay
-	 * @date		2017.11.05
-	 * @param		parentnode	 The address of the node who sent the NetworkBuild packet and who will be our parent node
-	 */
+		void blinkLEDsForSendingNetworkBuildPacket() {
+			/*The Measure node's both LED will blink once when it forwards the NetworkBuild packet.
+			 *At the end the both led will stay on.
+			 * example: source address = 2 : _ | _ | >     means: _: OFF, |: ON, -> stay on the last state
+			 *
+			 * @author		Marcell Zoltan Szalontay
+			 * @date		2017.11.05
+			 */
 
-	for (int i = 0; i < parentnode * 2 + 1; i++) {
-		__delay_cycles(500000);
-		BLINK_RED_LED;
-	}
-}
+			BLINK_BOTH_LED;
+			__delay_cycles(500000);
+			BLINK_BOTH_LED;
+		}
 
-void blinkLEDsForSendingNetworkBuildPacket() {
-	/*The Measure node's both LED will blink once when it forwards the NetworkBuild packet.
-	 *At the end the both led will stay on.
-	 * example: source address = 2 : _ | _ | >     means: _: OFF, |: ON, -> stay on the last state
-	 *
-	 * @author		Marcell Zoltan Szalontay
-	 * @date		2017.11.05
-	 */
+		void blinkLEDsForMeasurementPacket(char to) {
+			/*The Measure node's green LED will blink when one will turn it on as much as its own address.
+			 *At the end the green led will stay on.
+			 * example: to  address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
+			 *
+			 * @author		Marcell Zoltan Szalontay
+			 * @date		2017.11.05
+			 * @param		to	 The address of the device to whom the measurement message is transmitted.
+			 */
 
-	BLINK_BOTH_LED;
-	__delay_cycles(500000);
-	BLINK_BOTH_LED;
-}
+			TURN_OFF_BOTH_LED
+			;
+			for (int i = 0; i < to * 2 + 1; i++) {
+				__delay_cycles(500000);
+				BLINK_BOTH_LED;
+			}
+		}
 
-void blinkLEDsForMeasurementPacket(char to) {
-	/*The Measure node's green LED will blink when one will turn it on as much as its own address.
-	 *At the end the green led will stay on.
-	 * example: to  address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
-	 *
-	 * @author		Marcell Zoltan Szalontay
-	 * @date		2017.11.05
-	 * @param		to	 The address of the device to whom the measurement message is transmitted.
-	 */
+		void blinkLEDsForMyMeasurementPacket(char parentnode) {
+			/*The Measure node's both led will blink as much as our parent nodes address to whom the message is addressed.
+			 *At the end the both led will stay on.
+			 * example: parent nodes address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
+			 *
+			 * @author		Marcell Zoltan Szalontay
+			 * @date		2017.11.05
+			 * @param		parentnode	 The address of the device to whom the measurement message is transmitted.
+			 */
 
-	TURN_OFF_BOTH_LED
-	;
-	for (int i = 0; i < to * 2 + 1; i++) {
-		__delay_cycles(500000);
-		BLINK_BOTH_LED;
-	}
-}
+			TURN_OFF_BOTH_LED
+			;
+			for (int i = 0; i < parentnode * 2 + 1; i++) {
+				__delay_cycles(500000);
+				BLINK_BOTH_LED;
+			}
+		}
 
-void blinkLEDsForMyMeasurementPacket(char parentnode) {
-	/*The Measure node's both led will blink as much as our parent nodes address to whom the message is addressed.
-	 *At the end the both led will stay on.
-	 * example: parent nodes address = 2 : _ | _ | _ | ->     means: _: OFF, |: ON, -> stay on the last state
-	 *
-	 * @author		Marcell Zoltan Szalontay
-	 * @date		2017.11.05
-	 * @param		parentnode	 The address of the device to whom the measurement message is transmitted.
-	 */
+		char getParentNode() {
+			return parentnode;
+		}
 
-	TURN_OFF_BOTH_LED
-	;
-	for (int i = 0; i < parentnode * 2 + 1; i++) {
-		__delay_cycles(500000);
-		BLINK_BOTH_LED;
-	}
-}
+		char getDistance() {
+			return distance;
+			DOUBLE_LINE_BREAK;
+			sendString(
+					"**************************************************************************************************");
+			LINE_BREAK;
+			sendString(
+					"                                      MEASURENODE                                                 ");
+			LINE_BREAK;
+			sendString("                                      ADDRESS: ");
+			sendChar(myAddress + '0');
+			LINE_BREAK;
+			sendString(
+					"**************************************************************************************************");
+			DOUBLE_LINE_BREAK;
+			sendString(
+					"Jelenleg egy MeasureNode van sorosportra csatakoztatva.");
+			LINE_BREAK;
+			sendString(
+					"A meresi adat kuldesehez, kerlek nyomd meg a gombot a controlleren!");
+			LINE_BREAK;
+		}
 
-char getParentNode() {
-	return parentnode;
-}
+		void sendNetworkPacketToSerialPort(char *buffer) {
+			LINE_BREAK;
+			sendString(
+					"MeasurementNode DataLinkLayer tovabbkuldte a NetworkBuild-et!");
+			LINE_BREAK;
+			sendString("BROADCASTPACKET|myAddress|messageType|distance|");
+			LINE_BREAK;
+			sendString("DLL payload: ");
+			LINE_BREAK;
+			sendChar(buffer[0] + '0');
+			sendChar(buffer[1] + '0');
+			sendChar(buffer[2] + '0');
+			sendChar(buffer[3] + '0');
+			LINE_BREAK;
+		}
 
-char getDistance() {
-	return distance;
-	DOUBLE_LINE_BREAK;
-	sendString(
-			"**************************************************************************************************");
-	LINE_BREAK;
-	sendString(
-			"                                      MEASURENODE                                                 ");
-	LINE_BREAK;
-	sendString("                                      ADDRESS: ");
-	sendChar(myAddress + '0');
-	LINE_BREAK;
-	sendString(
-			"**************************************************************************************************");
-	DOUBLE_LINE_BREAK;
-	sendString("Jelenleg egy MeasureNode van sorosportra csatakoztatva.");
-	LINE_BREAK;
-	sendString(
-			"A meresi adat kuldesehez, kerlek nyomd meg a gombot a controlleren!");
-	LINE_BREAK;
-}
+		void sendMyMeasurementToSerialPort(char *buffer, char *measurementData,
+				char *rssi) {
 
-void sendNetworkPacketToSerialPort(char *buffer) {
-	LINE_BREAK;
-	sendString("MeasurementNode DataLinkLayer tovabbkuldte a NetworkBuild-et!");
-	LINE_BREAK;
-	sendString("BROADCASTPACKET|myAddress|messageType|distance|");
-	LINE_BREAK;
-	sendString("DLL payload: ");
-	LINE_BREAK;
-	sendChar(buffer[0] + '0');
-	sendChar(buffer[1] + '0');
-	sendChar(buffer[2] + '0');
-	sendChar(buffer[3] + '0');
-	LINE_BREAK;
-}
+			// bug result: measurementData: 1530
+			// rssi : 530 - és statikusan az is marad.
 
-void sendMyMeasurementToSerialPort(char *buffer, char *measurementData,
-		char *rssi) {
+			sendString(
+					"--------------------------------------------------------------------------------------------------");
+			LINE_BREAK;
+			sendString(
+					"MeasurementNode DataLinkLayer elkulte a MyMeasurementPacket-et!");
+			LINE_BREAK;
+			sendString(
+					"to|from|messagetype|distance|parentnode|source|measurementData|rssi");
+			LINE_BREAK;
+			sendString("DLL payload: ");
+			LINE_BREAK;
+			sendChar(buffer[0] + '0');
+			sendChar(buffer[1] + '0');
+			sendChar(buffer[2] + '0');
+			sendChar(buffer[3] + '0');
+			sendChar(buffer[4] + '0');
+			sendChar(buffer[5] + '0');
+			LINE_BREAK;
+			sendString(measurementData);
+			LINE_BREAK;
+			sendString(rssi);
+			LINE_BREAK;
 
-	// bug result: measurementData: 1530
-	// rssi : 530 - és statikusan az is marad.
+			sendString("To: ");
+			sendChar(buffer[0] + '0');
+			LINE_BREAK;
+			sendString("From: ");
+			sendChar(buffer[1] + '0');
+			LINE_BREAK;
+			sendString(
+					"Message Type (1 - NETWORKBUILDPACKET; 0 - MEASUREMENTPACKET): ");
+			sendChar(buffer[2] + '0');
+			LINE_BREAK;
+			sendString("Distance: ");
+			sendChar(buffer[3] + '0');
+			LINE_BREAK;
+			sendString("Parent Node: ");
+			sendChar(buffer[4] + '0');
+			LINE_BREAK;
+			sendString("Source: ");
+			sendChar(buffer[5] + '0');
+			LINE_BREAK;
+			sendString("Measurement Data: ");
+			sendString(measurementData);
+			LINE_BREAK;
+			sendString("RSSI: ");
+			sendString(rssi);
+			LINE_BREAK;
+			sendString(
+					"--------------------------------------------------------------------------------------------------");
+			LINE_BREAK;
 
-	sendString(
-			"--------------------------------------------------------------------------------------------------");
-	LINE_BREAK;
-	sendString(
-			"MeasurementNode DataLinkLayer elkulte a MyMeasurementPacket-et!");
-	LINE_BREAK;
-	sendString(
-			"to|from|messagetype|distance|parentnode|source|measurementData|rssi");
-	LINE_BREAK;
-	sendString("DLL payload: ");
-	LINE_BREAK;
-	sendChar(buffer[0] + '0');
-	sendChar(buffer[1] + '0');
-	sendChar(buffer[2] + '0');
-	sendChar(buffer[3] + '0');
-	sendChar(buffer[4] + '0');
-	sendChar(buffer[5] + '0');
-	LINE_BREAK;
-	sendString(measurementData);
-	LINE_BREAK;
-	sendString(rssi);
-	LINE_BREAK;
+		}
 
-	sendString("To: ");
-	sendChar(buffer[0] + '0');
-	LINE_BREAK;
-	sendString("From: ");
-	sendChar(buffer[1] + '0');
-	LINE_BREAK;
-	sendString(
-			"Message Type (1 - NETWORKBUILDPACKET; 0 - MEASUREMENTPACKET): ");
-	sendChar(buffer[2] + '0');
-	LINE_BREAK;
-	sendString("Distance: ");
-	sendChar(buffer[3] + '0');
-	LINE_BREAK;
-	sendString("Parent Node: ");
-	sendChar(buffer[4] + '0');
-	LINE_BREAK;
-	sendString("Source: ");
-	sendChar(buffer[5] + '0');
-	LINE_BREAK;
-	sendString("Measurement Data: ");
-	sendString(measurementData);
-	LINE_BREAK;
-	sendString("RSSI: ");
-	sendString(rssi);
-	LINE_BREAK;
-	sendString(
-			"--------------------------------------------------------------------------------------------------");
-	LINE_BREAK;
+		void receiveNetworkBuildDLLPacketToSerialPort(char *buffer) {
+			sendString(
+					"--------------------------------------------------------------------------------------------------");
+			LINE_BREAK;
+			sendString("DataLinkLayer NetworkBuild uzenetet kapott!");
+			LINE_BREAK;
+			sendString("BROADCASTPACKET|myAddress|messageType|distance|");
+			LINE_BREAK;
+			sendString("DLL payload: ");
+			LINE_BREAK;
+			sendChar(buffer[0] + '0');
+			sendChar(buffer[1] + '0');
+			sendChar(buffer[2] + '0');
+			sendChar(buffer[3] + '0');
+			LINE_BREAK;
 
-}
+			sendString("BROADCASTPACKET: ");
+			sendChar(buffer[0] + '0');
+			LINE_BREAK;
+			sendString("My Address: ");
+			sendChar(buffer[1] + '0');
+			LINE_BREAK;
+			sendString(
+					"Message Type (1 - NETWORKBUILDPACKET; 0 - MEASUREMENTPACKET): ");
+			sendChar(buffer[2] + '0');
+			LINE_BREAK;
+			sendString("Distance: ");
+			sendChar(buffer[3] + '0');
+			LINE_BREAK;
+			sendString(
+					"--------------------------------------------------------------------------------------------------");
+			LINE_BREAK;
+		}
 
-void receiveNetworkBuildDLLPacketToSerialPort(char *buffer) {
-	sendString(
-			"--------------------------------------------------------------------------------------------------");
-	LINE_BREAK;
-	sendString("DataLinkLayer NetworkBuild uzenetet kapott!");
-	LINE_BREAK;
-	sendString("BROADCASTPACKET|myAddress|messageType|distance|");
-	LINE_BREAK;
-	sendString("DLL payload: ");
-	LINE_BREAK;
-	sendChar(buffer[0] + '0');
-	sendChar(buffer[1] + '0');
-	sendChar(buffer[2] + '0');
-	sendChar(buffer[3] + '0');
-	LINE_BREAK;
+		void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer) {
+			char rssi[5];
+			sendString(
+					"--------------------------------------------------------------------------------------------------");
+			LINE_BREAK;
+			sendString("DataLinkLayer Measurement uzenetet kapott!");
+			LINE_BREAK;
+			sendString(
+					"to|from|messagetype|distance|parentnode|source|measurementData|rssi");
+			LINE_BREAK;
+			sendString("DLL payload: ");
+			LINE_BREAK;
+			sendChar(buffer[0] + '0');
+			sendChar(buffer[1] + '0');
+			sendChar(buffer[2] + '0');
+			sendChar(buffer[3] + '0');
+			sendChar(buffer[4] + '0');
+			sendChar(buffer[5] + '0');
 
-	sendString("BROADCASTPACKET: ");
-	sendChar(buffer[0] + '0');
-	LINE_BREAK;
-	sendString("My Address: ");
-	sendChar(buffer[1] + '0');
-	LINE_BREAK;
-	sendString(
-			"Message Type (1 - NETWORKBUILDPACKET; 0 - MEASUREMENTPACKET): ");
-	sendChar(buffer[2] + '0');
-	LINE_BREAK;
-	sendString("Distance: ");
-	sendChar(buffer[3] + '0');
-	LINE_BREAK;
-	sendString(
-			"--------------------------------------------------------------------------------------------------");
-	LINE_BREAK;
-}
+			memcpy(measurement, buffer + 6, 10);
+			rssilength = length - 16;
+			memcpy(rssi, buffer + 16, rssilength);
 
-void receiveMeasurementDLLPacketToSerialPort(char length, char *buffer) {
-	char rssi[5];
-	sendString(
-			"--------------------------------------------------------------------------------------------------");
-	LINE_BREAK;
-	sendString("DataLinkLayer Measurement uzenetet kapott!");
-	LINE_BREAK;
-	sendString(
-			"to|from|messagetype|distance|parentnode|source|measurementData|rssi");
-	LINE_BREAK;
-	sendString("DLL payload: ");
-	LINE_BREAK;
-	sendChar(buffer[0] + '0');
-	sendChar(buffer[1] + '0');
-	sendChar(buffer[2] + '0');
-	sendChar(buffer[3] + '0');
-	sendChar(buffer[4] + '0');
-	sendChar(buffer[5] + '0');
+			sendString(measurement);
+			sendString(rssi);
+			char measurementToSerial;
+			char rssiToSerial;
+			itoa(rssi, rssiToSerial, 10);
+			itoa(measurement, measurementToSerial, 10);
 
-	memcpy(measurement, buffer + 6, 10);
-	rssilength = length - 16;
-	memcpy(rssi, buffer + 16, rssilength);
+			sendString(measurementToSerial);
+			sendString(rssiToSerial);
+			sendString("To: ");
+			sendChar(buffer[0] + '0');
+			LINE_BREAK;
+			sendString("From: ");
+			sendChar(buffer[1] + '0');
+			LINE_BREAK;
+			sendString(
+					"Message Type (1 - NETWORKBUILDPACKET; 2 - MEASUREMENTPACKET): ");
+			sendChar(buffer[2] + '0');
+			LINE_BREAK;
+			sendString("Distance: ");
+			sendChar(buffer[3] + '0');
+			LINE_BREAK;
+			sendString("Parent Node: ");
+			sendChar(buffer[4] + '0');
+			LINE_BREAK;
+			sendString("Source: ");
+			sendChar(buffer[5] + '0');
+			LINE_BREAK;
+			sendString("Measurement Data: ");
+			sendString(measurementToSerial);
+			LINE_BREAK;
+			sendString("RSSI: ");
+			sendString(rssiToSerial);
+			LINE_BREAK;
+			sendString(
+					"--------------------------------------------------------------------------------------------------");
+			LINE_BREAK;
+		}
 
-	sendString(measurement);
-	sendString(rssi);
-	char measurementToSerial;
-	char rssiToSerial;
-	itoa(rssi, rssiToSerial, 10);
-	itoa(measurement, measurementToSerial, 10);
-
-	sendString(measurementToSerial);
-	sendString(rssiToSerial);
-	sendString("To: ");
-	sendChar(buffer[0] + '0');
-	LINE_BREAK;
-	sendString("From: ");
-	sendChar(buffer[1] + '0');
-	LINE_BREAK;
-	sendString(
-			"Message Type (1 - NETWORKBUILDPACKET; 2 - MEASUREMENTPACKET): ");
-	sendChar(buffer[2] + '0');
-	LINE_BREAK;
-	sendString("Distance: ");
-	sendChar(buffer[3] + '0');
-	LINE_BREAK;
-	sendString("Parent Node: ");
-	sendChar(buffer[4] + '0');
-	LINE_BREAK;
-	sendString("Source: ");
-	sendChar(buffer[5] + '0');
-	LINE_BREAK;
-	sendString("Measurement Data: ");
-	sendString(measurementToSerial);
-	LINE_BREAK;
-	sendString("RSSI: ");
-	sendString(rssiToSerial);
-	LINE_BREAK;
-	sendString(
-			"--------------------------------------------------------------------------------------------------");
-	LINE_BREAK;
-}
-
-void nodeIntroductionToSerialPort() {
-	DOUBLE_LINE_BREAK;
-	sendString(
-			"**************************************************************************************************");
-	LINE_BREAK;
-	sendString(
-			"                                      MEASURENODE                                                 ");
-	LINE_BREAK;
-	sendString("                                      ADDRESS: ");
-	sendChar(myAddress + '0');
-	LINE_BREAK;
-	sendString(
-			"**************************************************************************************************");
-	DOUBLE_LINE_BREAK;
-	sendString("Jelenleg egy MeasureNode van sorosportra csatakoztatva.");
-	LINE_BREAK;
-	sendString(
-			"A meresi adat kuldesehez, kerlek nyomd meg a gombot a controlleren!");
-	LINE_BREAK;
-}
+		void nodeIntroductionToSerialPort() {
+			DOUBLE_LINE_BREAK;
+			sendString(
+					"**************************************************************************************************");
+			LINE_BREAK;
+			sendString(
+					"                                      MEASURENODE                                                 ");
+			LINE_BREAK;
+			sendString("                                      ADDRESS: ");
+			sendChar(myAddress + '0');
+			LINE_BREAK;
+			sendString(
+					"**************************************************************************************************");
+			DOUBLE_LINE_BREAK;
+			sendString(
+					"Jelenleg egy MeasureNode van sorosportra csatakoztatva.");
+			LINE_BREAK;
+			sendString(
+					"A meresi adat kuldesehez, kerlek nyomd meg a gombot a controlleren!");
+			LINE_BREAK;
+		}

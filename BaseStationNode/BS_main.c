@@ -11,7 +11,7 @@
 //  July 2006
 //----------------------------------------------------------------------------
 
-#define VERBOSE
+//#define VERBOSE
 #include <stdlib.h>
 #include "BS_include.h"
 #include "UART.h"
@@ -86,7 +86,7 @@ int main(void) {
 		if (BUTTON_PRESSED) {
 			networkBuilderPacketCounter++;
 			txBuffer[0] = 0;
-			sendNetworkBuildDLLPacket(1, 0, myAddress, txBuffer);
+			sendNetworkBuildDLLPacket(1, 0, myAddress, networkBuilderPacketCounter,  txBuffer);
 			TURN_ON_GREEN_LED;
 			itoa(networkBuilderPacketCounter, networkBuilderPacketCounterString, 10);
 #ifdef VERBOSE

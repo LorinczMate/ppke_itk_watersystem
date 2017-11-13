@@ -28,7 +28,8 @@ char txBuffer[70];
 char rxBuffer[70];
 unsigned int i;
 
-unsigned char myAddress = 4;
+unsigned char myAddress = 3;
+volatile char timerDelayer = 1;
 
 int main(void) {
 	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
@@ -95,30 +96,29 @@ int main(void) {
 	char A[10];
 	char counter = 1;
 
-
 	TURN_ON_GREEN_LED;
 
 	while (1) {
 		__bis_SR_register(CPUOFF + GIE);
-/*
+		/*
 
-		sendString("B");
-		A[counter] = counter;
-		arrayShiftRight(counter, A, counter);
-		for(int i = 0; i < counter; i ++){
-			char temp[]={0, 0};
-			itoa(A[i], temp, 10);
-			sendString(temp);
-			LINE_BREAK;
-		}
-		sendString("C");
-		sendBullshit(counter, A);
-		counter++;
-		sendString("D");
-		TURN_ON_RED_LED;
-		__delay_cycles(1000000);
-		TURN_OFF_RED_LED;
-*/
+		 sendString("B");
+		 A[counter] = counter;
+		 arrayShiftRight(counter, A, counter);
+		 for(int i = 0; i < counter; i ++){
+		 char temp[]={0, 0};
+		 itoa(A[i], temp, 10);
+		 sendString(temp);
+		 LINE_BREAK;
+		 }
+		 sendString("C");
+		 sendBullshit(counter, A);
+		 counter++;
+		 sendString("D");
+		 TURN_ON_RED_LED;
+		 __delay_cycles(1000000);
+		 TURN_OFF_RED_LED;
+		 */
 		parentNode = getParentNode();
 		distance = getDistance();
 		if (parentNode != UNDEDINED_PARENT_NODE) {
@@ -146,9 +146,19 @@ __interrupt void wakeUpFromPort1BUTTON(void) {
 	P1IFG &= ~(SW1_MASK);
 }
 
-/*
- * __attribute__((interrupt(TIMERB0_VECTOR)))
+__attribute__((interrupt(TIMERB0_VECTOR)))
 void wakeUpFromTimer(void) {
-	__bic_SR_register_on_exit(CPUOFF);
+	if(timerDelayer%8 == 0) {
+		__bic_SR_register_on_exit(CPUOFF);
+	}
+	timerDelayer++;
+	char timeDelayertmp[3];
+	itoa(timerDelayer, timeDelayertmp, 10);
+	sendString(timeDelayertmp);
+
 }
- */
+
+void resetTimerDelayer(){
+	timerDelayer = 1;
+}
+

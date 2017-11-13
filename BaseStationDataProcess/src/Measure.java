@@ -1,38 +1,35 @@
+import java.util.ArrayList;
+
 /**
  * Created by marci on 2016.11.25..
  */
 public class Measure {
-    private int name;
-    private int from;
+    private ArrayList<Integer> address;
     private int distance;
-    private int measurementData;
-    private int rssi;
+    private ArrayList<Integer> measurementData;
+    private ArrayList<Integer> rssi;
 
-    public Measure(int name, int from, int distance, int measurementData, int rssi) {
-        this.name = name;
-        this.from = from;
+
+    public Measure(ArrayList<Integer> address, int distance,
+                   ArrayList<Integer> measurementData, ArrayList<Integer> rssi) {
+        this.address = address;
         this.distance = distance;
         this.measurementData = measurementData;
         this.rssi = rssi;
     }
 
-    public int getName() {
-        return name;
-    }
-
-    public int getFrom() {
-        return from;
-    }
+    public ArrayList<Integer> getAddress() {
+        return address; }
 
     public int getDistance() {
         return distance;
     }
 
-    public int getMeasurementData() {
+    public ArrayList<Integer> getMeasurementData() {
         return measurementData;
     }
 
-    public int getRssi() {
+    public ArrayList<Integer> getRssi() {
         return rssi;
     }
 }

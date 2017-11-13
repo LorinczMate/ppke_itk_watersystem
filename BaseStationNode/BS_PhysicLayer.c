@@ -1,4 +1,4 @@
-#define VERBOSE
+//#define VERBOSE
 #include "BS_PhysicLayer.h"
 #include "BS_include.h"
 #include "BS_DataLinkLayer.h"

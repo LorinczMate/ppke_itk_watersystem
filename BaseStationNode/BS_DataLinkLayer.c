@@ -90,13 +90,27 @@ void blinkLEDsForRecivigMeasurementPacket(char from) {
 	}
 }
 
-void sendNetworkBuildDLLPacket(char messageType, char distance, char myAddress,
+void sendNetworkBuildDLLPacket(char messageType, char distance, char myAddress, char versionID,
 		char *buffer) {
+	/*
+		 *The BaseStation start to build up the network and send the first network build packet.
+		 *
+		 *
+		 * @author		Marcell Zoltan Szalontay
+		 * @date		2017.11.13
+		 * @param		messageType 	it identify the message if its a networkbuild or a measurement packet.
+		 * 								NETWORKBUILDPACKET = 1           | MEASUREMENTPACKET = 0
+		 * @param 		distance		it sets the distance value for the measure nodes - that how many hops are the between them and the BS.
+		 * @param		myAddress		this value will be the parentnode value for the measure nodes and every node will change this value for their own address
+		 * @param		versionID		this parameter will identify a network building process to help a node to decide if a previous networkbuild packet came back or its a new process.
+		 * @param		buffer			is the array where to put these previous values.
+		 */
 	/*
 	 A CSOMAG FELÉPÍTÉSE:
 	 BROADCASTPACKET|myAddress|messageType|distance
 	 */
 	int payloadLength = 0;
+	arrayShiftRight(payloadLength++, buffer, versionID);
 	arrayShiftRight(payloadLength++, buffer, distance);
 	arrayShiftRight(payloadLength++, buffer, messageType);
 	arrayShiftRight(payloadLength++, buffer, myAddress);
