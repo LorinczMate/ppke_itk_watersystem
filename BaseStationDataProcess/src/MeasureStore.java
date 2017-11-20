@@ -1,10 +1,13 @@
 import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 /**
  * Created by marci on 2016.11.25..
  */
 public class MeasureStore {
+    private String database;
+    private String host;
     private String dataBasePath;
     private String url;
     private String username;
@@ -12,9 +15,11 @@ public class MeasureStore {
     private Connection conn;
     private Statement stmt;
 
-    public MeasureStore(String dataBasePath, String url, String username, String password) {
+    public MeasureStore(String dataBasePath, String host, String database, String username, String password) {
         this.dataBasePath = dataBasePath;
-        this.url = url;
+        //this.url = url;
+        this.host = host;
+        this.database = database;
         this.username = username;
         this.password = password;
     }
@@ -26,7 +31,17 @@ public class MeasureStore {
             System.err.println("Nincs telepítve a postgresql driver a JDBC-hez.");
             System.exit(1);
         }
-        conn = DriverManager.getConnection(url, username, password);
+
+        url =  String.format("jdbc:postgresql://%s/%s", host, database);
+
+        // set up the connection properties
+        Properties properties = new Properties();
+        properties.setProperty("user", username);
+        properties.setProperty("password", password);
+        properties.setProperty("ssl", "true");
+
+        conn = DriverManager.getConnection(url, properties);
+        //conn = DriverManager.getConnection(url, username, password);
         stmt = conn.createStatement();
     }
 
@@ -71,15 +86,15 @@ public class MeasureStore {
     }
 
     private void insertMeasureIntoDataBase(int address, int distance, int measurementData, int rssi) throws SQLException {
-            Integer sensorsid;
-            String existsQuery = "select sensorsid from sensors where name = ?"; // name lehet unique az adatbázisban
+            Integer sensor_id;
+            String existsQuery = "select sensor_id from sensors where name = ?"; // name lehet unique az adatbázisban
             PreparedStatement exists = conn.prepareStatement(existsQuery);
             exists.setInt(1,address);
             ResultSet rset = exists.executeQuery();
             if (rset.next()){
-                sensorsid = rset.getInt("sensorsid");
+                sensor_id = rset.getInt("sensor_id");
             } else {
-                String lastInsertedIDQuery = "insert into sensors (name, distance, min_val, max_val) VALUES (?,?,?,?) RETURNING sensorsid;";
+                String lastInsertedIDQuery = "insert into sensors (name, distance, min_val, max_val) VALUES (?,?,?,?) RETURNING sensor_id;";
                 PreparedStatement lastInsertedID = conn.prepareStatement(lastInsertedIDQuery);
                 lastInsertedID.setInt(1, address);
                 lastInsertedID.setInt(2, distance);
@@ -87,11 +102,11 @@ public class MeasureStore {
                 lastInsertedID.setInt(4, 1023);
                 ResultSet lastInsertedIDResult = lastInsertedID.executeQuery(); // ide kell beszúrni a többi értéket
                 lastInsertedIDResult.next();
-                sensorsid = lastInsertedIDResult.getInt("sensorsid");
+                sensor_id = lastInsertedIDResult.getInt("sensor_id");
             }
-            String insertMeasureQuery = "insert into measures(name, from_, distance, measurement_data, rssi) VALUES (?, ?, ?, ?, ?)";
+            String insertMeasureQuery = "insert into measures(senros_id, sensor_name, distance, measurement_data, rssi) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement insertMeasure = conn.prepareStatement(insertMeasureQuery);
-            insertMeasure.setInt(1,sensorsid);
+            insertMeasure.setInt(1,sensor_id);
             insertMeasure.setInt(2,address);
             insertMeasure.setInt(3,distance);
             insertMeasure.setInt(4,measurementData);

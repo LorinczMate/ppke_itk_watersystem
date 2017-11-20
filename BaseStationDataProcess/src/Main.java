@@ -7,7 +7,8 @@ public class Main {
     private static final boolean readFromSerialPort = true;
     public static void main(String[] args)  {
         MeasureStore insertToDB = new MeasureStore("org.postgresql.Driver",
-                "jdbc:postgresql://localhost:5432/postgres", "szama7", "szama7");
+                "mypsqlserver-20171120.postgres.database.azure.com","postgres", "serveradmin@mypsqlserver-20171120", "server_admin1");
+        //"jdbc:postgresql://localhost:5432/postgres"
         try {
             insertToDB.buildConnection();
         } catch (SQLException e) {
