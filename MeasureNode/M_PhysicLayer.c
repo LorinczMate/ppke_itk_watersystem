@@ -4,7 +4,7 @@
 #include "M_DataLinkLayer.h"
 #include "utility.h"
 
-char rxBuffer[70];
+char rxBuffer[100];
 
 // ISR for received packet
 // The ISR assumes the int came from the pin attached to GDO0 and therefore

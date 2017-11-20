@@ -24,11 +24,11 @@ void ConfigureAdc(void);
 
 extern char paTable[];		// power table for C2500
 extern char paTableLen;
-char txBuffer[70];
-char rxBuffer[70];
+char txBuffer[100];
+char rxBuffer[100];
 unsigned int i;
 
-unsigned char myAddress = 3;
+unsigned char myAddress = 8;
 volatile char timerDelayer = 1;
 
 int main(void) {
